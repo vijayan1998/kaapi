@@ -1,0 +1,185 @@
+import 'dart:io';
+
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:kappi/src/views/screens/navigation/navigationscreen.dart';
+import 'package:kappi/src/views/utilies/colors.dart';
+import 'package:kappi/src/views/utilies/images.dart';
+import 'package:kappi/src/views/utilies/sizedbox.dart';
+import 'package:kappi/src/views/widget/custom_button.dart';
+
+class EditScreen extends StatefulWidget {
+  const EditScreen({super.key});
+
+  @override
+  State<EditScreen> createState() => _EditScreenState();
+}
+
+class _EditScreenState extends State<EditScreen> {
+  TextEditingController name = TextEditingController();
+  TextEditingController phone = TextEditingController();
+   XFile? image;
+
+  Future<void> pickImage() async {
+    final pickedImage =
+        await ImagePicker().pickImage(source: ImageSource.gallery);
+
+    if (pickedImage != null) {
+      final imageFile = File(pickedImage.path);
+
+      // Get the file size in bytes
+      int imageSize = await imageFile.length();
+
+      // Convert bytes to MB
+      double imageSizeInMB = imageSize / (1024 * 1024);
+
+      // Check if the image size exceeds 3MB
+      if (imageSizeInMB > 5) {
+        // Show an error message (using SnackBar in this case)
+        // ignore: use_build_context_synchronously
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content:
+                Text('Image size exceeds 5MB. Please choose a smaller file.'),
+          ),
+        );
+      } else {
+        // If the image size is acceptable, update the state
+        setState(() {
+          image = pickedImage;
+        });
+      }
+    }
+  }
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Appcolors.appColors.shade50,
+       appBar: AppBar(
+        leading: IconButton(onPressed: (){
+          Get.to(NavigationScreen(index: 4));
+        }, 
+        icon: Icon(Icons.arrow_back,color: Appcolors.appColors.shade100,)),
+        backgroundColor: Appcolors.appColors.shade50,
+        centerTitle: true,
+        title: Text('Edit Profile',style: Theme.of(context).textTheme.titleLarge!.copyWith(
+          color: Appcolors.appColors.shade100,
+          fontWeight: FontWeight.w700,
+        ),),
+      ),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 24,horizontal: 16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Center(
+                child: Stack(
+                  clipBehavior: Clip.none,
+                  children:[ 
+                   image != null ?  Container(
+                              height: 120,
+                              width: 120,
+                              decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: Colors.white,
+                                  image: DecorationImage(
+                                      image: FileImage(
+                                        File(image!.path),
+                                      ),
+                                      fit: BoxFit.cover)),
+                            ): Image.asset(Appimage.profileimg),
+                    Positioned(
+                      right: -5,
+                      bottom: 6,
+                      child: InkWell(
+                        onTap: pickImage,
+                        child: Image.asset(Appimage.editprofile)))
+            ]),
+              ),
+              24.vspace,
+               Text('Full Name',
+              style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                color: Appcolors.appColors.shade100,
+              ),),
+              8.vspace,
+              TextFormField(
+                controller: name,
+                style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                  color: Appcolors.appColors.shade100,
+                ),
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: BorderSide(
+                      width: 1,
+                      color: Color(0xff737373),
+                    ),
+                  )
+                ),
+              ),
+                24.vspace,
+               Text('Phone Number',
+              style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                color: Appcolors.appColors.shade100,
+              ),),
+              8.vspace,
+              TextFormField(
+                controller: phone,
+                style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                  color: Appcolors.appColors.shade100,
+                ),
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: BorderSide(
+                      width: 1,
+                      color: Color(0xff737373),
+                    ),
+                  )
+                ),
+              ),
+              24.vspace,
+              Text('Address',
+              style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                color: Appcolors.appColors.shade100,
+                fontWeight: FontWeight.w600,
+              ),),
+              ListTile(
+                contentPadding: EdgeInsets.all(0),
+                leading: Image.asset(Appimage.home2),
+                title: Text('Home',style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                  color: Appcolors.appColors.shade100,
+                ),),
+                subtitle: Text('123 Main St, Anytown, USA',style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                  color: Appcolors.appColors.shade100,
+                ),),
+                trailing: Image.asset(Appimage.edit),
+              ),
+               ListTile(
+                contentPadding: EdgeInsets.all(0),
+                leading: Image.asset(Appimage.work),
+                title: Text('Work',style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                  color: Appcolors.appColors.shade100,
+                ),),
+                subtitle: Text('456 Oak Ave, Anytown, USA',style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                  color: Appcolors.appColors.shade100,
+                ),),
+                trailing: Image.asset(Appimage.edit),
+              ),
+              24.vspace,
+                Custombuttonwidget(text: 'Save', 
+                color: Color(0xff40332B), 
+                textColor: Appcolors.appColors.shade100,
+                onPressed: (){
+                  Get.to(NavigationScreen(index: 4));
+                },),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}

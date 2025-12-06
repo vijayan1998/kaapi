@@ -1,12 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:kappi/src/bloc/apiurl.dart';
+import 'package:kappi/src/bloc/category_bloc.dart';
+import 'package:kappi/src/bloc/category_event.dart';
+import 'package:kappi/src/bloc/category_state.dart';
+import 'package:kappi/src/respositiory/api_service.dart';
+import 'package:kappi/src/views/screens/navigation/store/storeadd.dart';
 import 'package:kappi/src/views/utilies/colors.dart';
-import 'package:kappi/src/views/utilies/images.dart';
-import 'package:kappi/src/views/utilies/route_name.dart';
 import 'package:kappi/src/views/utilies/sizedbox.dart';
 
 class Storedinein extends StatefulWidget {
-  const Storedinein({super.key});
+  final String storeid;
+  const Storedinein({super.key, required this.storeid});
 
   @override
   State<Storedinein> createState() => _StoredineinState();
@@ -15,34 +20,6 @@ class Storedinein extends StatefulWidget {
 class _StoredineinState extends State<Storedinein> {
   TextEditingController search = TextEditingController();
 
-List<Map<String,dynamic>> orderlist = [
-  {
-    'image':Appimage.order1,
-    'title':'Coffee',
-  },
-  {
-    'image':Appimage.order2,
-    'title':'Tea',
-  },{
-    'image':Appimage.order3,
-    'title':'Cold Brews',
-  },{
-    'image':Appimage.order4,
-    'title':'Pastries',
-  },{
-    'image':Appimage.order5,
-    'title':'Sandwiches',
-  },{
-    'image':Appimage.order6,
-    'title':'Desserts',
-  },{
-    'image':Appimage.order7,
-    'title':'Smoothies',
-  },{
-    'image':Appimage.order8,
-    'title':'Healthy',
-  },
-];
 
   @override
   Widget build(BuildContext context) {
@@ -83,7 +60,15 @@ List<Map<String,dynamic>> orderlist = [
                         ),
               ),
               16.vspace,
-                GridView.builder(
+              BlocProvider(create: (_) => CategoryBloc(StoreRepository()),
+              child: BlocBuilder<CategoryBloc,CategoryState>(builder: (context,state){
+                if(state is CategoryinitState){
+                  BlocProvider.of<CategoryBloc>(context).add(CategoryFetchEvent());
+                  return CircularProgressIndicator();
+                }else if(state is CategoryLoadingState){
+                  return CircularProgressIndicator();
+                }else if(state is CategorySuccessState){
+                  return  GridView.builder(
                   shrinkWrap: true,
                   padding: EdgeInsets.all(0),
                   physics: NeverScrollableScrollPhysics(),
@@ -93,20 +78,22 @@ List<Map<String,dynamic>> orderlist = [
                     crossAxisSpacing: 8,
                     childAspectRatio: 2 / 2
                     ), 
-                    itemCount: orderlist.length,
+                    itemCount: state.orderModel.length,
                     itemBuilder: (context,index){ 
-                      final items = orderlist[index];
-                      return InkWell(
+                      final items = state.orderModel[index];
+                      return items.categoryname.isEmpty && items.categoryimage.isEmpty ?Center(child: Text('No Category',style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                        color: Appcolors.appColors.shade100
+                      ),),) : InkWell(
                         onTap: (){
-                         Get.toNamed(Appnames.storeaddscreen);
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => StoreaddScreen(storeid: widget.storeid,category: items.categoryname,)));
                         },
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
-                            Image.asset(items['image']),
+                            Image.network('${Apiurl.apiurl}/uploads/category/${items.categoryimage}'),
                             4.vspace,
-                            Text(items['title'],style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                            Text(items.categoryname,style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                               fontWeight: FontWeight.w500,
                               color: Appcolors.appColors.shade100,
                               fontSize: 16
@@ -114,7 +101,14 @@ List<Map<String,dynamic>> orderlist = [
                           ],
                         ),
                       );
-                    }),
+                    });
+                }
+                else if(state is CategoryErrorState){
+                  return Text(state.message,style: TextStyle(color: Colors.white));
+                }
+                return Container();
+              }
+              ),)   
             ],
           ),
         ),

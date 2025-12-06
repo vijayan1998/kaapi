@@ -9,16 +9,16 @@ import 'package:kappi/src/views/screens/navigation/order/orderaddscreen.dart';
 import 'package:kappi/src/views/utilies/colors.dart';
 import 'package:kappi/src/views/utilies/sizedbox.dart';
 
-class StoreHotScreen extends StatefulWidget {
+class Storecoldscreen extends StatefulWidget {
   final String storeid;
   final String category;
-  const StoreHotScreen({super.key, required this.storeid,required this.category});
+  const Storecoldscreen({super.key, required this.storeid,required this.category});
 
   @override
-  State<StoreHotScreen> createState() => _StoreHotScreenState();
+  State<Storecoldscreen> createState() => _StorecoldscreenState();
 }
 
-class _StoreHotScreenState extends State<StoreHotScreen> {
+class _StorecoldscreenState extends State<Storecoldscreen> {
   @override
   Widget build(BuildContext context) {
     return 
@@ -30,15 +30,13 @@ class _StoreHotScreenState extends State<StoreHotScreen> {
           }else if(state is FetchMenuLoadingState){
             return CircularProgressIndicator();
           }else if(state is FetchMenuSuccessState){
-            final hotlist = state.menuModel.where((element) => element.type == 'hot').toList();
+            final hotlist = state.menuModel.where((element) => element.type == 'cold').toList();
             return ListView.builder(
               shrinkWrap: true,
               itemCount: hotlist.length,
               itemBuilder: (context,index){
               final items = hotlist[index];
-            return items.category.isEmpty ? Text('No Menu',style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-              color: Appcolors.appColors.shade100,
-            ),) :Padding(
+            return Padding(
               padding: const EdgeInsets.all(8.0),
               child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
@@ -57,14 +55,11 @@ class _StoreHotScreenState extends State<StoreHotScreen> {
                       fontWeight: FontWeight.w600,
                     ),
                   ),
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width / 2,
-                    child: Text(
-                      items.description,
-                      style: Theme.of(context).textTheme.titleSmall!.copyWith(
-                        color: Appcolors.appColors.shade400,
-                        fontWeight: FontWeight.w500,
-                      ),
+                  Text(
+                    items.description,
+                    style: Theme.of(context).textTheme.titleSmall!.copyWith(
+                      color: Appcolors.appColors.shade400,
+                      fontWeight: FontWeight.w500,
                     ),
                   ),
                 ],

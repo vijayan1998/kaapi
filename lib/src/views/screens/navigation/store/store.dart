@@ -5,6 +5,7 @@ import 'package:kappi/src/bloc/store_event.dart';
 import 'package:kappi/src/bloc/store_state.dart';
 import 'package:kappi/src/model/store_model.dart';
 import 'package:kappi/src/respositiory/api_service.dart';
+import 'package:kappi/src/views/screens/navigation/store/storelist.dart';
 import 'package:kappi/src/views/utilies/colors.dart';
 import 'package:kappi/src/views/utilies/images.dart';
 import 'package:kappi/src/views/utilies/sizedbox.dart';
@@ -92,7 +93,7 @@ class _StoreScreenState extends State<StoreScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.start,
                  children: [
-                   BlocProvider(create: (_) => FetchStoreBloc(StoreRepository()),
+              BlocProvider(create: (_) => FetchStoreBloc(StoreRepository()),
               child: BlocBuilder<FetchStoreBloc,StoreState>(
                 builder: (context,state){
                   if(state is FetchStoreInitial){
@@ -126,7 +127,7 @@ class _StoreScreenState extends State<StoreScreen> {
                         )
                       ),
                       onPressed: (){
-                        // Get.toNamed(Appnames.storelist);
+                        Navigator.of(context).push(MaterialPageRoute(builder: (context) => StorelistScreen(storeid: item.storeid)));
                       },
                       child: Text('Select Store',style: Theme.of(context).textTheme.titleSmall!.copyWith(
                         color: Appcolors.appColors.shade100,

@@ -1,5 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
+import 'package:kappi/src/bloc/apiurl.dart';
+import 'package:kappi/src/bloc/login_bloc.dart';
+import 'package:kappi/src/bloc/login_event.dart';
+import 'package:kappi/src/bloc/login_state.dart';
+import 'package:kappi/src/views/screens/navigation/profile/editscreen.dart';
 import 'package:kappi/src/views/utilies/colors.dart';
 import 'package:kappi/src/views/utilies/images.dart';
 import 'package:kappi/src/views/utilies/route_name.dart';
@@ -14,6 +20,26 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+  String username ='';
+  String userimg = '';
+  String phone = '';
+  String email = '';
+  @override
+  void initState(){
+    // get the storeid in userlist
+  BlocProvider.of<UserBloc>(context).add(FetchLoginEvent());
+    context.read<UserBloc>().stream.listen((state){
+      if(state is FetchLoginSuccessState){
+        setState(() {
+            username = state.loginModel.username;
+            userimg = state.loginModel.userimg;
+            phone = state.loginModel.phone;
+            email = state.loginModel.email;
+        });
+      }
+    });
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -35,16 +61,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
                 Center(
-                  child: Image.asset(Appimage.profileimg),
+                  child: Image.network(userimg.isNotEmpty ? '${Apiurl.apiurl}/uploads/menu/$userimg' :Appimage.profileimg),
                 ),
                 8.vspace,
                 Center(
-                  child: Text('AAABBSBBSS',style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                  child: Text(username.isNotEmpty ? username :'AAABBSBBSS',style: Theme.of(context).textTheme.titleMedium!.copyWith(
                     color: Appcolors.appColors.shade100,
                   ),),
                 ),
                  Center(
-                  child: Text('+91 99837346387',style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                  child: Text(phone.isNotEmpty ? phone :'+91 99837346387',style: Theme.of(context).textTheme.titleMedium!.copyWith(
                     color: Color(0xffBDA89E),
                   ),),
                 ),
@@ -53,7 +79,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 color: Color(0xff40332B), 
                 textColor: Appcolors.appColors.shade100,
                 onPressed: (){
-                  Get.toNamed(Appnames.edit);
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => EditScreen(
+                    image: userimg, username: username, email: email, phone: phone)));
                 },),
                 16.vspace,
                 Row(

@@ -5,7 +5,8 @@ import 'package:kappi/src/views/screens/navigation/store/storedinein.dart';
 import 'package:kappi/src/views/utilies/colors.dart' show Appcolors;
 
 class StorelistScreen extends StatefulWidget {
-  const StorelistScreen({super.key});
+  final String storeid;
+  const StorelistScreen({super.key, required this.storeid});
 
   @override
   State<StorelistScreen> createState() => _StorelistScreenState();
@@ -90,8 +91,8 @@ class _StorelistScreenState extends State<StorelistScreen> with TickerProviderSt
              Expanded(child: TabBarView(
               controller: tabController,
               children: [
-              Storedinein(),
-              Storedinein()
+              Storedinein(storeid: widget.storeid),
+              Storedinein(storeid: widget.storeid),
              ])),
         ],
       ),

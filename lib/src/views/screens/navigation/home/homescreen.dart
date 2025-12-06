@@ -1,5 +1,14 @@
+
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
+import 'package:kappi/src/bloc/login_bloc.dart';
+import 'package:kappi/src/bloc/login_event.dart';
+import 'package:kappi/src/bloc/login_state.dart';
+import 'package:kappi/src/respositiory/login_service.dart';
 import 'package:kappi/src/views/screens/navigation/home/dineinscreen.dart';
 import 'package:kappi/src/views/screens/navigation/home/takeawayscreen.dart';
 import 'package:kappi/src/views/utilies/colors.dart';
@@ -16,17 +25,45 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   late TabController tabController;
-
-    @override 
+  String userid = '';
+  String  latitude = '';
+  String langtude = '';
+  String storeid = '';
+  @override 
   void initState(){
     super.initState();
     tabController = TabController(length: 2, vsync: this);
     tabController.addListener((){
-      setState(() {
-        
-      });
+      setState(() {});
     });
+    getlocation();
+      
   }
+ 
+void getlocation() async {
+  await Geolocator.checkPermission();
+  await Geolocator.requestPermission();
+  Position position = await Geolocator.getCurrentPosition(locationSettings: LocationSettings(
+    accuracy: LocationAccuracy.low
+  ));
+  latitude = position.latitude.toString();
+  langtude = position.longitude.toString();
+    // // Listen to UserBloc updates
+        context.read<UserBloc>().stream.listen((state){
+          if(state is FetchLoginSuccessState){
+            userid = state.loginModel.userid;
+               // send location event after getting userid
+               context.read<LocationBloc>().add(LocationPostEvent(langtude: langtude, latitude: latitude, userid: userid));
+            Future.delayed(Duration(seconds: 2),() {
+              setState(() {
+                 storeid = state.loginModel.store;
+              });
+            });
+         
+          }
+        });
+}
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -37,25 +74,45 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            16.vspace,
+            16.vspace,  
             Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Image.asset(Appimage.location,height: 26,width: 26,),
                 6.hspace,
-                Text('Your Cafe: Anna Nagar ...',style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                BlocProvider(create: (_) => UserBloc(LoginRepository()),
+            child: BlocBuilder<UserBloc,LoginState>(builder: (context,state){
+              if(state is FetchLogininitalState){
+                BlocProvider.of<UserBloc>(context).add(FetchLoginEvent());
+                return CircularProgressIndicator();
+              }
+              if(state is FetchLoginLoading){
+                return CircularProgressIndicator();
+              }
+              if(state is FetchLoginSuccessState){
+                 return Text(state.loginModel.username.isNotEmpty ? state.loginModel.username : "Guest User",style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                   color: Appcolors.appColors.shade100,
-                ),),
+                 ),);
+              } else if(state is FetchLoginErrorState){
+                return Text(state.message,style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                  color: Appcolors.appColors.shade100,
+                 ),);
+              }
+              return Container();
+            }),
+            ),
                 6.hspace,
                 Image.asset(Appimage.arrow,width: 26,height: 26,),
                 Spacer(),
                 Image.asset(Appimage.cart,width: 26,height: 26,),
                 16.hspace,
                 InkWell(
-                  onTap: (){
-                    Get.toNamed(Appnames.notifications);
-                    },
-                  child: Image.asset(Appimage.notifications,height: 26,width: 26,)),
+                onTap: (){
+                  getlocation();
+                  Get.toNamed(Appnames.notifications);
+                  },
+                child: Image.asset(Appimage.notifications,height: 26,width: 26,)),
               ],
             ),
             16.vspace,

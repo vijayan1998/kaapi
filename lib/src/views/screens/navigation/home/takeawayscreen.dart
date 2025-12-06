@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:kappi/src/model/home_model.dart';
+import 'package:kappi/src/model/order_model.dart';
 import 'package:kappi/src/views/utilies/colors.dart';
 import 'package:kappi/src/views/utilies/images.dart';
 import 'package:kappi/src/views/utilies/route_name.dart';

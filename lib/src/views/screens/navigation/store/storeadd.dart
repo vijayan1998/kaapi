@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:kappi/src/views/screens/navigation/store/hotscreen.dart';
+import 'package:kappi/src/views/screens/navigation/store/storecoldscreen.dart';
 import 'package:kappi/src/views/screens/navigation/store/storelist.dart';
 import 'package:kappi/src/views/utilies/colors.dart';
 import 'package:kappi/src/views/utilies/sizedbox.dart';
 
 class StoreaddScreen extends StatefulWidget {
-  const StoreaddScreen({super.key});
+  final String storeid;
+  final String category;
+  const StoreaddScreen({super.key, required this.storeid,required this.category});
 
   @override
   State<StoreaddScreen> createState() => _StoreaddScreenState();
@@ -34,7 +37,7 @@ class _StoreaddScreenState extends State<StoreaddScreen> with TickerProviderStat
         backgroundColor: Appcolors.appColors.shade50,
         leading: InkWell(
           onTap: (){
-              Get.to(StorelistScreen());
+            Get.to(StorelistScreen(storeid: widget.storeid,));
           },
           child: Icon(Icons.arrow_back,color: Appcolors.appColors.shade100,)),
         centerTitle: true,
@@ -122,8 +125,8 @@ class _StoreaddScreenState extends State<StoreaddScreen> with TickerProviderStat
              Expanded(child: TabBarView(
               controller: tabController,
               children: [
-              StoreHotScreen(),
-              StoreHotScreen(),
+              StoreHotScreen(storeid: widget.storeid,category: widget.category,),
+              Storecoldscreen(storeid: widget.storeid,category: widget.category),
              ]))
           ],
         ),

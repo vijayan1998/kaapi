@@ -1,8 +1,13 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:kappi/src/bloc/login_bloc.dart';
+import 'package:kappi/src/bloc/login_event.dart';
+import 'package:kappi/src/bloc/login_state.dart';
+import 'package:kappi/src/respositiory/login_service.dart';
 import 'package:kappi/src/views/screens/navigation/navigationscreen.dart';
 import 'package:kappi/src/views/utilies/colors.dart';
 import 'package:kappi/src/views/utilies/images.dart';
@@ -10,7 +15,11 @@ import 'package:kappi/src/views/utilies/sizedbox.dart';
 import 'package:kappi/src/views/widget/custom_button.dart';
 
 class EditScreen extends StatefulWidget {
-  const EditScreen({super.key});
+  final String image;
+  final String username;
+  final String email;
+  final String phone;
+  const EditScreen({super.key, required this.image, required this.username, required this.email, required this.phone});
 
   @override
   State<EditScreen> createState() => _EditScreenState();
@@ -18,6 +27,7 @@ class EditScreen extends StatefulWidget {
 
 class _EditScreenState extends State<EditScreen> {
   TextEditingController name = TextEditingController();
+  TextEditingController email = TextEditingController();
   TextEditingController phone = TextEditingController();
    XFile? image;
 
@@ -51,6 +61,13 @@ class _EditScreenState extends State<EditScreen> {
         });
       }
     }
+  }
+  @override
+  void initState() {
+    name = TextEditingController(text: widget.username);
+    email = TextEditingController(text: widget.email);
+    phone = TextEditingController(text: widget.phone);
+    super.initState();
   }
   @override
   Widget build(BuildContext context) {
@@ -120,6 +137,27 @@ class _EditScreenState extends State<EditScreen> {
                   )
                 ),
               ),
+              24.vspace,
+               Text('Email',
+              style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                color: Appcolors.appColors.shade100,
+              ),),
+              8.vspace,
+              TextFormField(
+                controller: email,
+                style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                  color: Appcolors.appColors.shade100,
+                ),
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: BorderSide(
+                      width: 1,
+                      color: Color(0xff737373),
+                    ),
+                  )
+                ),
+              ),
                 24.vspace,
                Text('Phone Number',
               style: Theme.of(context).textTheme.bodyMedium!.copyWith(
@@ -128,6 +166,7 @@ class _EditScreenState extends State<EditScreen> {
               8.vspace,
               TextFormField(
                 controller: phone,
+                readOnly: true,
                 style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                   color: Appcolors.appColors.shade100,
                 ),
@@ -170,12 +209,33 @@ class _EditScreenState extends State<EditScreen> {
                 trailing: Image.asset(Appimage.edit),
               ),
               24.vspace,
-                Custombuttonwidget(text: 'Save', 
+              BlocProvider(create: (_) => UserDetailsBloc(LoginRepository()),
+              child: BlocConsumer<UserDetailsBloc,LoginState>(
+                listener: (context,state){
+                  if(state is FetchLoginSuccessState){
+                   
+                     Get.to(NavigationScreen(index: 4));
+                  }
+                  if(state is FetchLoginErrorState){
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.message,style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                      color: Appcolors.appColors.shade100,
+                    ),)));
+                  }
+                },
+              builder: (context,state){
+                bool isLoading = state is LoginLodingState;
+                return   Custombuttonwidget(text: 'Save', 
                 color: Color(0xff40332B), 
+                isLoading: isLoading,
                 textColor: Appcolors.appColors.shade100,
                 onPressed: (){
-                  Get.to(NavigationScreen(index: 4));
-                },),
+                  final fileName = image != null ? image!.path.split('/').last : "";
+                  context.read<UserDetailsBloc>().add(LoginUpdateEvent(email: email.text, 
+                  userimg: fileName, username: name.text));
+                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Update Successfully')));
+                },);
+              },),),
+              
             ],
           ),
         ),

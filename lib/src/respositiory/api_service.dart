@@ -1,6 +1,9 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
+import 'package:kappi/src/bloc/apiurl.dart';
+import 'package:kappi/src/model/menu_model.dart';
+import 'package:kappi/src/model/order_model.dart';
 import 'package:kappi/src/model/store_model.dart';
 import 'package:dio/dio.dart';
 class StoreRepository{
@@ -39,8 +42,7 @@ class StoreRepository{
 
   Future<List<StoreModel>> fetchallList() async {
     try {
-      final response = await http.get(Uri.parse('http://10.36.62.5:5000/store/getallstores'));
-     
+      final response = await http.get(Uri.parse('${Apiurl.apiurl}/store/getallstores'));
       if(response.statusCode == 200){
          final decoeded = json.decode(response.body);
         List<dynamic> responsedata = decoeded['data'];
@@ -53,4 +55,52 @@ class StoreRepository{
       throw Exception('Error fetching courses: $e');
     }
   }
+
+
+  Future<List<MenuModel>> fetchMenulist(String storeid) async {
+    try {
+      final response = await http.get(Uri.parse('${Apiurl.apiurl}/menu/store/$storeid'));
+      if(response.statusCode == 200){
+        final decoded = json.decode(response.body);
+        List<dynamic> responseData = decoded['data'];
+        return responseData.map((data) => MenuModel.fromjson(data)).toList();
+      }else {
+        throw Exception('Error fetch menu');
+      }
+    } catch (e) {
+      throw Exception('Error fetch menu:$e');
+    }
+  }
+
+  Future<List<OrderModel>> categoryList() async{
+    try {
+      final response = await http.get(Uri.parse('${Apiurl.apiurl}/category/getallcategory'));
+      if(response.statusCode == 200){
+        final decoded = json.decode(response.body);
+        List<dynamic> responseData = decoded['data'];
+        return responseData.map((data) => OrderModel.fromjson(data)).toList(); 
+      } else {
+        throw Exception('Fetch Category list');
+      }
+    } catch (e) {
+      throw Exception('Failed Data');
+    }
+  }
+
+  Future<List<MenuModel>> storemenulist(String storeid,String categoryid) async {
+    try {
+      final response = await http.get(Uri.parse('${Apiurl.apiurl}/menu/store/$storeid/category/$categoryid'));
+      if(response.statusCode == 200){
+        final decoded = json.decode(response.body);
+        List<dynamic> responseData = decoded['data'];
+       return responseData.map((data) => MenuModel.fromjson(data)).toList();
+      }
+      else{
+        throw Exception('Fetch Data Error');
+      }
+    } catch (e) {
+      throw Exception('Fetch Error');
+    }
+  }
+
 }

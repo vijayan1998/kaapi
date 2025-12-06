@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:kappi/src/views/screens/navigation/navigationscreen.dart';
+import 'package:kappi/src/views/screens/navigation/order/coldscreen.dart';
 import 'package:kappi/src/views/screens/navigation/order/hotscreen.dart';
 import 'package:kappi/src/views/utilies/colors.dart';
 import 'package:kappi/src/views/utilies/sizedbox.dart';
@@ -137,7 +138,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> with TickerProv
               controller: tabController,
               children: [
               HotScreen(),
-              HotScreen(),
+              ColdScreen(),
              ]))
           ],
         ),

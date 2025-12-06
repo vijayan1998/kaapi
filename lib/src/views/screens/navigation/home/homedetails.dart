@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:kappi/src/bloc/apiurl.dart';
+import 'package:kappi/src/model/menu_model.dart';
 import 'package:kappi/src/views/screens/navigation/navigationscreen.dart';
 import 'package:kappi/src/views/utilies/colors.dart';
 import 'package:kappi/src/views/utilies/images.dart';
@@ -8,7 +10,13 @@ import 'package:kappi/src/views/widget/custom_button.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 
 class HomeDetailsScreen extends StatefulWidget {
-  const HomeDetailsScreen({super.key});
+  final String category;
+  final String productimg;
+  final String productname;
+  final String description;
+  final List<AddOn> addons;
+  final int price;
+  const HomeDetailsScreen({super.key, required this.category, required this.productimg, required this.productname, required this.description, required this.addons, required this.price});
 
   @override
   State<HomeDetailsScreen> createState() => _HomeDetailsScreenState();
@@ -28,7 +36,7 @@ class _HomeDetailsScreenState extends State<HomeDetailsScreen> {
           child: Image.asset(Appimage.cancel,color: Appcolors.appColors.shade100,),
         ),
         centerTitle: true,
-        title: Text('Customize',style: Theme.of(context).textTheme.titleLarge!.copyWith(
+        title: Text(widget.category,style: Theme.of(context).textTheme.titleLarge!.copyWith(
           color: Appcolors.appColors.shade100,
           fontWeight: FontWeight.w700,
         ),),
@@ -40,14 +48,14 @@ class _HomeDetailsScreenState extends State<HomeDetailsScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              Image.asset(Appimage.coffee4,width: MediaQuery.of(context).size.width,fit: BoxFit.fill,),
+              Image.network('${Apiurl.apiurl}/uploads/menu/${widget.productimg}',width: MediaQuery.of(context).size.width,fit: BoxFit.fill,),
               16.vspace,
-              Text('Iced Vanilla Latte',style: Theme.of(context).textTheme.titleLarge!.copyWith(
+              Text(widget.productname,style: Theme.of(context).textTheme.titleLarge!.copyWith(
                 color: Appcolors.appColors.shade100,
                 fontWeight: FontWeight.w500,
               ),),
               8.vspace,
-               Text('A classic espresso drink with a sweet vanilla flavor, served over ice.',style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+               Text(widget.description,style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                 color: Appcolors.appColors.shade100,
                 fontWeight: FontWeight.w400,
               ),),
@@ -195,9 +203,10 @@ class _HomeDetailsScreenState extends State<HomeDetailsScreen> {
              ),),
              8.vspace,
              Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Container(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: widget.addons.isNotEmpty ? widget.addons.map((addons){
+                return  Container(
+                  margin: EdgeInsets.all(8),
                   padding: EdgeInsets.all(8),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(8),
@@ -206,50 +215,16 @@ class _HomeDetailsScreenState extends State<HomeDetailsScreen> {
                       color: Color(0xff664533),
                     ),
                   ),
-                  child: Text('No Sugar',style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                  child: Text(addons.name.toString(),style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                     color: Appcolors.appColors.shade100,
                   ),),
-                ),
-                 Container(
-                  padding: EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(
-                      width: 1,
-                      color: Color(0xff664533),
-                    ),
-                  ),
-                  child: Text('Less Sugar',style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                    color: Appcolors.appColors.shade100,
-                  ),),
-                ),
-                 Container(
-                  padding: EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(
-                      width: 1,
-                      color: Color(0xff664533),
-                    ),
-                  ),
-                  child: Text('Normal',style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                    color: Appcolors.appColors.shade100,
-                  ),),
-                ),
-                 Container(
-                  padding: EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(
-                      width: 1,
-                      color: Color(0xff664533),
-                    ),
-                  ),
-                  child: Text('Extra Sweet',style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                    color: Appcolors.appColors.shade100,
-                  ),),
-                ),
-              ],
+                );
+              }).toList() 
+              : [
+                Text('No Addons Available',style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                  color: Appcolors.appColors..shade100,
+                ),)
+              ]
              ),
              24.vspace,
               Text('Price Summary',style: Theme.of(context).textTheme.titleLarge!.copyWith(
@@ -284,7 +259,7 @@ class _HomeDetailsScreenState extends State<HomeDetailsScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    Text('\$4.50',style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                    Text('\$${widget.price}',style: Theme.of(context).textTheme.bodySmall!.copyWith(
                       color: Appcolors.appColors.shade100,
                       fontWeight: FontWeight.w600,
                     ),),
@@ -294,7 +269,7 @@ class _HomeDetailsScreenState extends State<HomeDetailsScreen> {
                       fontWeight: FontWeight.w600,
                     ),),
                     8.vspace,
-                    Text('\$4.50',style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                    Text('\$${widget.price}',style: Theme.of(context).textTheme.bodySmall!.copyWith(
                       color: Appcolors.appColors.shade100,
                       fontWeight: FontWeight.w600,
                     ),),

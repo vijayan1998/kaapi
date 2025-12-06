@@ -5,3 +5,21 @@ class LoginPostEvent extends LoginEvent{
 
   LoginPostEvent({required this.phone});
 }
+
+class FetchLoginEvent extends LoginEvent{}
+
+class LocationPostEvent extends LoginEvent{
+  final String userid;
+  final String latitude;
+  final String langtude;
+
+  LocationPostEvent({required this.langtude,required this.latitude,required this.userid});
+}
+
+class LoginUpdateEvent extends LoginEvent{
+  final String userimg;
+  final String username;
+  final String email;
+
+  LoginUpdateEvent({required this.email,required this.userimg,required this.username});
+}

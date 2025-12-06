@@ -1,7 +1,16 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
-import 'package:kappi/src/model/home_model.dart';
+import 'package:kappi/src/bloc/apiurl.dart';
+import 'package:kappi/src/bloc/login_bloc.dart';
+import 'package:kappi/src/bloc/login_event.dart';
+import 'package:kappi/src/bloc/login_state.dart';
+import 'package:kappi/src/bloc/menu_bloc.dart';
+import 'package:kappi/src/bloc/menu_event.dart';
+import 'package:kappi/src/bloc/menu_state.dart';
+import 'package:kappi/src/respositiory/api_service.dart';
+import 'package:kappi/src/views/screens/navigation/home/homedetails.dart';
 import 'package:kappi/src/views/utilies/colors.dart';
 import 'package:kappi/src/views/utilies/images.dart';
 import 'package:kappi/src/views/utilies/route_name.dart';
@@ -9,6 +18,8 @@ import 'package:kappi/src/views/utilies/sizedbox.dart';
 
 
 class DineinScreen extends StatefulWidget {
+ 
+  
   const DineinScreen({super.key});
 
   @override
@@ -22,13 +33,23 @@ class _DineinScreenState extends State<DineinScreen> {
     Appimage.banner3,
     Appimage.banner4
   ];
-
-  List<HomeModel> homelist = [
-  HomeModel(image: Appimage.coffee1, title: 'Cappuccino',price: '4.5 • ₹3.50'),
-  HomeModel(image: Appimage.coffee2, title: 'Espresso',price:'4.5 • ₹3.50'),
-  HomeModel(image: Appimage.coffee3, title: 'Latte',price:'4.5 • ₹3.50'),
-  HomeModel(image: Appimage.coffee4, title: 'Mocha',price:'4.5 • ₹3.50'),
-];
+String storeid = '';
+String username = '';
+@override
+void initState(){
+    // get the storeid in userlist
+    BlocProvider.of<UserBloc>(context).add(FetchLoginEvent());
+    context.read<UserBloc>().stream.listen((state) {
+      if (state is FetchLoginSuccessState) {
+        username = state.loginModel.username;
+        setState(() {
+          storeid = state.loginModel.store;
+        });
+      }
+    });
+  super.initState();
+  
+}
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -36,7 +57,7 @@ class _DineinScreenState extends State<DineinScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           16.vspace,
-          Text('Good morning, Ethan',style: Theme.of(context).textTheme.titleLarge!.copyWith(
+          Text(username.isNotEmpty ? 'Good morning, $username' : 'Good morning Guest ',style: Theme.of(context).textTheme.titleLarge!.copyWith(
             color: Appcolors.appColors.shade100,
             fontWeight: FontWeight.w500,
           ),),
@@ -136,7 +157,20 @@ class _DineinScreenState extends State<DineinScreen> {
             ],
           ),
           16.vspace,
-          GridView.builder(
+          BlocProvider(create: (_) => MenuBloc(StoreRepository()),
+          child: BlocBuilder<MenuBloc,MenuState>(
+            builder: (context,state){
+              if(state is FetchMenuInitiState){
+                Future.delayed(Duration(seconds: 2),() =>{
+                   BlocProvider.of<MenuBloc>(context).add(FetchMenuEvent(storeid:storeid)),
+                });
+            
+                return Center(child: CircularProgressIndicator());
+              }
+              else if(state is FetchMenuLoadingState){
+                return Center(child: CircularProgressIndicator());
+              }else if(state is FetchMenuSuccessState){
+                return  GridView.builder(
                 shrinkWrap: true,
                 padding: EdgeInsets.all(0),
                 physics: NeverScrollableScrollPhysics(),
@@ -146,32 +180,46 @@ class _DineinScreenState extends State<DineinScreen> {
                   crossAxisSpacing: 8,
                   childAspectRatio: 2.3 / 3
                   ), 
-                  itemCount: homelist.length,
+                  itemCount: state.menuModel.length,
                   itemBuilder: (context,index){
+                    final items = state.menuModel[index];
                     return InkWell(
                       onTap: (){
-                         Get.toNamed(Appnames.homedetails);
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => HomeDetailsScreen(
+                            category:items.category, productimg: items.productimg, 
+                            productname: items.productname, description: items.description, 
+                            addons: items.addons!, price: items.price)));
                       },
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
-                          Image.asset(homelist[index].image),
+                          Image.network('${Apiurl.apiurl}/uploads/menu/${items.productimg}',
+                          errorBuilder: (_, __,___) => Icon(Icons.error,color: Colors.red,),),
                           4.vspace,
-                          Text(homelist[index].title,style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                          Text(items.productname,style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                             fontWeight: FontWeight.w500,
                             color: Appcolors.appColors.shade100,
                             fontSize: 16
                           ),),
                           4.vspace,
-                            Text(homelist[index].price,style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                            Text(items.price.toString(),style: Theme.of(context).textTheme.bodySmall!.copyWith(
                               color: Color(0xffCFB88C),
                                 fontWeight: FontWeight.w500
                               ),),
                         ],
                       ),
                     );
-                  }),
+                  });
+              } else if(state is FetchMenuErrorState){
+                return Text(state.message,style: TextStyle(
+                  color: Colors.white,
+                ),);
+              }
+              return Container();
+          }
+          ),
+          ),
               ListView.builder(
                 shrinkWrap: true,
                 padding: EdgeInsets.all(4),

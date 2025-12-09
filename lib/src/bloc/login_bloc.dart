@@ -11,8 +11,10 @@ class LoginBloc extends Bloc<LoginEvent,LoginState> {
   on<LoginPostEvent>((event,emit) async {
     emit(LoginLodingState());
     try {
-      await loginRepository.login(event.phone);
-      emit(LoginSuccessState(loginModel: 'Success'));
+      
+     final response = await loginRepository.login(event.phone);
+      final userid = response['data']['userId'];
+      emit(LoginSuccessState(loginModel: userid));
     } catch (e) {
       emit(LoginErrorState(message: e.toString()));
     }
@@ -25,6 +27,7 @@ class LocationBloc extends Bloc<LoginEvent,LoginState>{
 
   LocationBloc(this.locationRepository) : super(LoginStateintialState()){
     on<LocationPostEvent>((event,emit) async {
+      emit(LoginLodingState());
       try {
         await locationRepository.currentlocation(event.userid, event.latitude, event.langtude);
         emit(LoginSuccessState(loginModel: 'Success'));
@@ -59,6 +62,22 @@ class UserDetailsBloc extends Bloc<LoginEvent,LoginState>{
       emit(LoginLodingState());
       try {
          await loginRepository.userDetails(event.userimg, event.username, event.email);
+        emit(LoginSuccessState(loginModel: 'Success'));
+      } catch (e) {
+        emit(LoginErrorState(message: e.toString()));
+      }
+    });
+  }
+}
+
+class UserAddressBloc extends Bloc<LoginEvent,LoginState>{
+  final LoginRepository loginRepository;
+
+  UserAddressBloc(this.loginRepository) : super(LoginStateintialState()){
+    on<LoginAddressEvent>((event,emit) async {
+      emit(LoginLodingState());
+      try {
+        await loginRepository.userAddress(event.name, event.location);
         emit(LoginSuccessState(loginModel: 'Success'));
       } catch (e) {
         emit(LoginErrorState(message: e.toString()));

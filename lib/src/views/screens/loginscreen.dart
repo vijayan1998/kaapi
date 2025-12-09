@@ -1,11 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
-import 'package:kappi/src/bloc/login_bloc.dart';
-import 'package:kappi/src/bloc/login_event.dart';
-import 'package:kappi/src/bloc/login_state.dart';
-import 'package:kappi/src/respositiory/login_service.dart';
-import 'package:kappi/src/views/screens/navigation/navigationscreen.dart';
+import 'package:kappi/src/views/screens/otpscreen.dart';
 import 'package:kappi/src/views/utilies/colors.dart';
 import 'package:kappi/src/views/utilies/images.dart';
 import 'package:kappi/src/views/utilies/sizedbox.dart';
@@ -113,42 +108,30 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
             ),
           ),
-         
         ],
       ),
-      bottomNavigationBar: BlocProvider(
-            create: (_) => LoginBloc(LoginRepository()),
-            child: BlocConsumer<LoginBloc,LoginState>(
-              listener: (context,state){
-                 if(state is LoginSuccessState){
-                   Navigator.push(context, MaterialPageRoute(builder: (context) => NavigationScreen(index: 0)));
-                }
-                if(state is LoginErrorState){
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error')));
-                }
-              },
-              builder: (context,state){
-                bool isLoading = state is LoginLodingState;
-                return Padding(padding: EdgeInsets.all(16),
-      child: Custombuttonwidget(isLoading :isLoading,text: 'Send OTP', 
-      color: Appcolors.appColors.shade200, textColor: Appcolors.appColors.shade100,
-      onPressed: () async {
-        if(formkey.currentState!.validate()){
-          if(phone.text.isEmpty){
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadiusGeometry.circular(16)
-          ),
-          content: Text('Please Enter Your Phone Number',
-        style: Theme.of(context).textTheme.titleSmall!.copyWith(
-          color: Appcolors.appColors.shade100,
-        ),),
-        backgroundColor: Appcolors.appColors.shade200,));
-          }
-           context.read<LoginBloc>().add(LoginPostEvent(phone: phone.text)); 
-        } 
-      },),);
-              }),)
+      bottomNavigationBar:Padding(padding: EdgeInsets.all(16),
+            child: Custombuttonwidget(text: 'Send OTP', 
+            color: Appcolors.appColors.shade200, textColor: Appcolors.appColors.shade100,
+            onPressed: () async {
+              if(formkey.currentState!.validate()){
+                if(phone.text.isEmpty){
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                shape: RoundedRectangleBorder(
+      borderRadius: BorderRadiusGeometry.circular(16)
+                ),
+                content: Text('Please Enter Your Phone Number',
+              style: Theme.of(context).textTheme.titleSmall!.copyWith(
+                color: Appcolors.appColors.shade100,
+              ),),
+              backgroundColor: Appcolors.appColors.shade200,));
+                } 
+                else{
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => Otpscreen(phone: phone.text)));
+                } 
+                //  context.read<LoginBloc>().add(LoginPostEvent(phone: phone.text)); 
+              } 
+            },),)
     );
   }
 }

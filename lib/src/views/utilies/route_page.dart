@@ -10,7 +10,6 @@ import 'package:kappi/src/views/screens/navigation/order/orderdetails.dart';
 import 'package:kappi/src/views/screens/navigation/profile/deleteaccount.dart';
 import 'package:kappi/src/views/screens/navigation/profile/deliveryadd.dart';
 import 'package:kappi/src/views/screens/navigation/profile/deliveryaddress.dart';
-import 'package:kappi/src/views/screens/navigation/profile/editscreen.dart';
 import 'package:kappi/src/views/screens/navigation/profile/logoutscreen.dart';
 import 'package:kappi/src/views/screens/navigation/profile/myorderscreen.dart';
 import 'package:kappi/src/views/screens/navigation/profile/offerreward.dart';
@@ -21,7 +20,6 @@ import 'package:kappi/src/views/screens/navigation/profile/reorderscreen.dart';
 import 'package:kappi/src/views/screens/navigation/store/storeadd.dart';
 import 'package:kappi/src/views/screens/navigation/store/storelist.dart';
 import 'package:kappi/src/views/screens/onboardingscreen.dart';
-import 'package:kappi/src/views/screens/otpscreen.dart';
 import 'package:kappi/src/views/screens/otpverified.dart';
 import 'package:kappi/src/views/screens/wrongnumberscreen.dart';
 import 'package:kappi/src/views/screens/wrongotpscreen.dart';
@@ -59,12 +57,12 @@ class AppRoutes {
       transitionDuration: const Duration(milliseconds: 250),
       transition: Transition.leftToRightWithFade ,
     ),
-    GetPage(
-      name: Appnames.otpScreen,
-      page: () => Otpscreen(),
-      transitionDuration: const Duration(milliseconds: 250),
-      transition: Transition.leftToRightWithFade ,
-    ),
+    // GetPage(
+    //   name: Appnames.otpScreen,
+    //   page: () => Otpscreen(),
+    //   transitionDuration: const Duration(milliseconds: 250),
+    //   transition: Transition.leftToRightWithFade ,
+    // ),
      GetPage(
       name: Appnames.navigator,
       page: () => NavigationScreen(index: 0,),

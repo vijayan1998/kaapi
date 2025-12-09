@@ -7,19 +7,23 @@ import 'package:image_picker/image_picker.dart';
 import 'package:kappi/src/bloc/login_bloc.dart';
 import 'package:kappi/src/bloc/login_event.dart';
 import 'package:kappi/src/bloc/login_state.dart';
+import 'package:kappi/src/model/login_model.dart';
 import 'package:kappi/src/respositiory/login_service.dart';
 import 'package:kappi/src/views/screens/navigation/navigationscreen.dart';
+import 'package:kappi/src/views/screens/navigation/profile/editaddress.dart';
 import 'package:kappi/src/views/utilies/colors.dart';
 import 'package:kappi/src/views/utilies/images.dart';
 import 'package:kappi/src/views/utilies/sizedbox.dart';
 import 'package:kappi/src/views/widget/custom_button.dart';
 
 class EditScreen extends StatefulWidget {
-  final String image;
-  final String username;
-  final String email;
-  final String phone;
-  const EditScreen({super.key, required this.image, required this.username, required this.email, required this.phone});
+  final String? image;
+  final String? username;
+  final String? email;
+  final String? phone;
+  final List<Address>? address;
+
+  const EditScreen({super.key, this.username, this.email,this.phone,this.image,this.address});
 
   @override
   State<EditScreen> createState() => _EditScreenState();
@@ -189,13 +193,18 @@ class _EditScreenState extends State<EditScreen> {
               ListTile(
                 contentPadding: EdgeInsets.all(0),
                 leading: Image.asset(Appimage.home2),
-                title: Text('Home',style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                title: Text(widget.address!.isEmpty ? 'Home' :widget.address!.first.name.toString(),style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                   color: Appcolors.appColors.shade100,
                 ),),
-                subtitle: Text('123 Main St, Anytown, USA',style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                subtitle: Text(widget.address!.isEmpty ? '123 Asssmdg' :widget.address!.first.address.toString(),style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                   color: Appcolors.appColors.shade100,
                 ),),
-                trailing: Image.asset(Appimage.edit),
+                trailing: InkWell(child: Image.asset(Appimage.edit),onTap: (){
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => EditAddressScreens(
+                    // name: widget.address!.first.name.toString(),
+                    // address: widget.address!.first.address.toString(),
+                  )));
+                },),
               ),
                ListTile(
                 contentPadding: EdgeInsets.all(0),
@@ -213,7 +222,6 @@ class _EditScreenState extends State<EditScreen> {
               child: BlocConsumer<UserDetailsBloc,LoginState>(
                 listener: (context,state){
                   if(state is FetchLoginSuccessState){
-                   
                      Get.to(NavigationScreen(index: 4));
                   }
                   if(state is FetchLoginErrorState){
@@ -224,7 +232,7 @@ class _EditScreenState extends State<EditScreen> {
                 },
               builder: (context,state){
                 bool isLoading = state is LoginLodingState;
-                return   Custombuttonwidget(text: 'Save', 
+                return  Custombuttonwidget(text: 'Save', 
                 color: Color(0xff40332B), 
                 isLoading: isLoading,
                 textColor: Appcolors.appColors.shade100,

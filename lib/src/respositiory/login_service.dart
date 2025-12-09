@@ -11,21 +11,23 @@ final Dio dio = Dio();
   
   String userid = '';
 
-  Future<void> login(String phone) async {
-    final box = Hive.box('userBox');
+  Future<Map<String,dynamic>> login(String phone) async {
     final response = await dio.post('${Apiurl.apiurl}/user/createuser',
     data:  {
       'phone':phone,
     });
    
-    if(response.statusCode == 200 || response.statusCode == 201){
-      var json = response.data;
-      // throw Exception('Login Success');
-      //Extract the userID
-       userid = json['data']['userId'];
-      // save in Hive
-      await box.put('userId', userid);
+    if(response.statusCode == 200){
+      throw Exception('Login Success');
+      // var json = response.data;
+      // // throw Exception('Login Success');
+      // //Extract the userID
+      //  userid = json['data']['userId'];
+      // // save in Hive
+      // await box.put('userId', userid);
+     
     }
+    return response.data;
   }
 
   Future<void> currentlocation(String userid,String latuitude,String langtude) async{
@@ -61,9 +63,21 @@ final Dio dio = Dio();
       'user_name':username,
       'email':email,
     });
-    print('dkfk:${response.data}');
     if(response.statusCode == 200){
       throw Exception('User Details Update Successful');
+    }
+  }
+
+  Future<void> userAddress(String name,String address) async {
+    final box = Hive.box('userBox');
+    final userId = box.get('userId');
+    final response = await dio.put('${Apiurl.apiurl}/user/$userId/address',
+    data: {
+      'name':name,
+      'location':address
+    });
+    if(response.statusCode == 200){
+      throw Exception('User Address Update Successfully');
     }
   }
 }

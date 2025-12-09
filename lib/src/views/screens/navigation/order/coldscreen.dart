@@ -56,7 +56,6 @@ class _ColdScreenState extends State<ColdScreen> {
                     ).add(FetchMenuEvent(storeid: storeid)),
                   },
                 );
-
                 return Center(child: CircularProgressIndicator());
               } else if (state is FetchMenuLoadingState) {
                 return Center(child: CircularProgressIndicator());
@@ -65,6 +64,11 @@ class _ColdScreenState extends State<ColdScreen> {
                     state.menuModel
                         .where((element) => element.type == 'cold')
                         .toList();
+                if(menuhotlist.isEmpty){
+                  return Center(child: Text('No Menu',style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                    color: Appcolors.appColors.shade100,
+                  ),),);
+                }
                 return ListView.builder(
                   shrinkWrap: true,
                   padding: EdgeInsets.all(0),

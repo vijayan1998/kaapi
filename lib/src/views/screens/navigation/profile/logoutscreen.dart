@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
+import 'package:kappi/src/bloc/Auth/auth_bloc.dart';
+import 'package:kappi/src/bloc/Auth/auth_event.dart';
 import 'package:kappi/src/views/screens/navigation/navigationscreen.dart';
 import 'package:kappi/src/views/utilies/colors.dart';
 import 'package:kappi/src/views/utilies/images.dart';
@@ -73,6 +76,7 @@ class _LogoutScreenState extends State<LogoutScreen> {
             Custombuttonwidget(text: 'Logout', 
             color: Color(0xffE33D47), textColor: Appcolors.appColors.shade100,
             onPressed: (){
+              context.read<AuthBloc>().add(LogoutEvent());
               Get.toNamed(Appnames.loginScreen);
             },),
             16.vspace,

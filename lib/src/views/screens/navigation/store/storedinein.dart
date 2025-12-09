@@ -64,9 +64,9 @@ class _StoredineinState extends State<Storedinein> {
               child: BlocBuilder<CategoryBloc,CategoryState>(builder: (context,state){
                 if(state is CategoryinitState){
                   BlocProvider.of<CategoryBloc>(context).add(CategoryFetchEvent());
-                  return CircularProgressIndicator();
+                  return Center(child: CircularProgressIndicator());
                 }else if(state is CategoryLoadingState){
-                  return CircularProgressIndicator();
+                  return Center(child: CircularProgressIndicator());
                 }else if(state is CategorySuccessState){
                   return  GridView.builder(
                   shrinkWrap: true,
@@ -81,7 +81,7 @@ class _StoredineinState extends State<Storedinein> {
                     itemCount: state.orderModel.length,
                     itemBuilder: (context,index){ 
                       final items = state.orderModel[index];
-                      return items.categoryname.isEmpty && items.categoryimage.isEmpty ?Center(child: Text('No Category',style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                      return items.categoryname.isEmpty && items.categoryimage.isEmpty ? Center(child: Text('No Category',style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                         color: Appcolors.appColors.shade100
                       ),),) : InkWell(
                         onTap: (){

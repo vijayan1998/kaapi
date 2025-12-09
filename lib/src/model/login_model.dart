@@ -4,7 +4,7 @@ class LoginModel {
   final String userid;
   final String username;
   final String email;
-  final String address;
+  final List<Address>? address;
   final String userimg;
   final int walletbalance;
   final String membership;
@@ -23,7 +23,7 @@ class LoginModel {
     membership: json['membership_type'] ??'',
     status: json['status']?? '',
     store: json['store']?.toString() ?? '',
-    address: json['address']?.toString() ?? '');
+    address: json['address'] != null ? List<Address>.from(json['address'].map((data) =>Address.fromJson(data))) : []);
   }
 
   Map<String,dynamic>toJson() {
@@ -37,8 +37,28 @@ class LoginModel {
       'membership_type':membership,
       'status':status,
       'store':store,
-      'address':address,
+      'address':address?.map((e)=>e.toJson()).toList(),
     };
   }
 
+}
+
+class Address{
+  final String? name;
+  final String? address;
+
+  Address({ this.name,this.address});
+
+  factory Address.fromJson(Map<String,dynamic>json){
+    return Address(
+      name: json['name'],
+      address: json['location'],
+    );
+  }
+  Map<String,dynamic>toJson() {
+    return {
+      'name':name,
+      'location':address
+    };
+  }
 }

@@ -56,6 +56,11 @@ class _HotScreenState extends State<HotScreen> {
             );
           }else if(state is FetchMenuSuccessState){
             final menuhotlist = state.menuModel.where((element) => element.type == 'hot').toList();
+            if(menuhotlist.isEmpty){
+              return Text('NO Menu',style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                color: Appcolors.appColors.shade100,
+              ),);
+            }
             return ListView.builder(
               shrinkWrap: true,
               scrollDirection: Axis.vertical,

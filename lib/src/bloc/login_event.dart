@@ -23,3 +23,10 @@ class LoginUpdateEvent extends LoginEvent{
 
   LoginUpdateEvent({required this.email,required this.userimg,required this.username});
 }
+
+class LoginAddressEvent extends LoginEvent{
+  final String name;
+  final String location;
+
+  LoginAddressEvent({required this.location,required this.name});
+}

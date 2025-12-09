@@ -5,6 +5,7 @@ import 'package:kappi/src/bloc/apiurl.dart';
 import 'package:kappi/src/bloc/login_bloc.dart';
 import 'package:kappi/src/bloc/login_event.dart';
 import 'package:kappi/src/bloc/login_state.dart';
+import 'package:kappi/src/model/login_model.dart';
 import 'package:kappi/src/views/screens/navigation/profile/editscreen.dart';
 import 'package:kappi/src/views/utilies/colors.dart';
 import 'package:kappi/src/views/utilies/images.dart';
@@ -24,6 +25,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   String userimg = '';
   String phone = '';
   String email = '';
+  List<Address> address = [];
   @override
   void initState(){
     // get the storeid in userlist
@@ -35,6 +37,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             userimg = state.loginModel.userimg;
             phone = state.loginModel.phone;
             email = state.loginModel.email;
+            address = state.loginModel.address!;
         });
       }
     });
@@ -80,7 +83,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 textColor: Appcolors.appColors.shade100,
                 onPressed: (){
                   Navigator.push(context, MaterialPageRoute(builder: (context) => EditScreen(
-                    image: userimg, username: username, email: email, phone: phone)));
+                    username: username, email: email, phone: phone,image: userimg,address: address,)));
                 },),
                 16.vspace,
                 Row(

@@ -48,7 +48,7 @@ class OnboardingWidget extends StatelessWidget {
                     )),
                   ),
                 ),
-               36.vspace,
+               26.vspace,
                Center(
                  child: Text(title,style: Theme.of(context).textTheme.headlineMedium!.copyWith(
                   color: titleColor,
@@ -63,7 +63,7 @@ class OnboardingWidget extends StatelessWidget {
                  textAlign: TextAlign.center,),
                ), 
                28.vspace,
-              Image.asset(image1),
+              Image.asset(image1,height:MediaQuery.of(context).size.height / 2.5,width: MediaQuery.of(context).size.width,),
               ],
             ),
           ),

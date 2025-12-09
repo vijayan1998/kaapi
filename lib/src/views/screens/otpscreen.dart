@@ -1,5 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
+import 'package:kappi/src/bloc/Auth/auth_bloc.dart';
+import 'package:kappi/src/bloc/Auth/auth_event.dart';
+import 'package:kappi/src/bloc/login_bloc.dart';
+import 'package:kappi/src/bloc/login_event.dart';
+import 'package:kappi/src/bloc/login_state.dart';
+import 'package:kappi/src/respositiory/login_service.dart';
+import 'package:kappi/src/views/screens/navigation/navigationscreen.dart';
 import 'package:kappi/src/views/utilies/colors.dart';
 import 'package:kappi/src/views/utilies/images.dart';
 import 'package:kappi/src/views/utilies/route_name.dart';
@@ -8,15 +16,16 @@ import 'package:kappi/src/views/widget/custom_button.dart';
 import 'package:pinput/pinput.dart';
 
 class Otpscreen extends StatefulWidget {
-  const Otpscreen({super.key});
+  final String phone;
+  const Otpscreen({super.key, required this.phone});
 
   @override
   State<Otpscreen> createState() => _OtpscreenState();
 }
 
 class _OtpscreenState extends State<Otpscreen> {
-    TextEditingController pinputController = TextEditingController();
-     final focusNode = FocusNode(); 
+  TextEditingController pinputController = TextEditingController();
+  final focusNode = FocusNode(); 
   @override
   Widget build(BuildContext context) {
       final defaultPinTheme = PinTheme(
@@ -96,11 +105,30 @@ class _OtpscreenState extends State<Otpscreen> {
               SizedBox(
                 height: MediaQuery.of(context).size.height / 2.6,
               ),
-                Custombuttonwidget(text: 'Verify & Continue', 
-         color:  Appcolors.appColors.shade200, textColor: Appcolors.appColors.shade100,
-         onPressed: (){
-            Get.toNamed(Appnames.navigator);
-         },),
+               BlocProvider(
+            create: (_) => LoginBloc(LoginRepository()),
+            child: BlocConsumer<LoginBloc,LoginState>(
+              listener: (context,state){
+                 if(state is LoginSuccessState){
+                  // save to Hive userid
+                   context.read<AuthBloc>().add(SaveUserEvent(userid: state.loginModel));
+                   Navigator.push(context, MaterialPageRoute(builder: (context) => NavigationScreen(index: 0)));
+                }
+                if(state is LoginErrorState){
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error')));
+                }
+              },
+              builder: (context,state){
+                bool isLoading = state is LoginLodingState;
+                return Padding(padding: EdgeInsets.all(16),
+      child: Custombuttonwidget(isLoading :isLoading,text: 'Send OTP', 
+      color: Appcolors.appColors.shade200, textColor: Appcolors.appColors.shade100,
+      onPressed: () async {
+      context.read<LoginBloc>().add(LoginPostEvent(phone: widget.phone,));  
+      },
+      ),
+      );
+              }),),
          24.vspace,
          InkWell(
           onTap: (){

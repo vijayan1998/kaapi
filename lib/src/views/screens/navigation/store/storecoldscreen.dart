@@ -31,6 +31,13 @@ class _StorecoldscreenState extends State<Storecoldscreen> {
             return CircularProgressIndicator();
           }else if(state is FetchMenuSuccessState){
             final hotlist = state.menuModel.where((element) => element.type == 'cold').toList();
+            if(hotlist.isEmpty){
+              return Center(
+                child: Text('No Menu',style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                  color: Appcolors.appColors.shade100,
+                ),),
+              );
+            }
             return ListView.builder(
               shrinkWrap: true,
               itemCount: hotlist.length,
@@ -55,11 +62,14 @@ class _StorecoldscreenState extends State<Storecoldscreen> {
                       fontWeight: FontWeight.w600,
                     ),
                   ),
-                  Text(
-                    items.description,
-                    style: Theme.of(context).textTheme.titleSmall!.copyWith(
-                      color: Appcolors.appColors.shade400,
-                      fontWeight: FontWeight.w500,
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width / 2,
+                    child: Text(
+                      items.description,
+                      style: Theme.of(context).textTheme.titleSmall!.copyWith(
+                        color: Appcolors.appColors.shade400,
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
                   ),
                 ],

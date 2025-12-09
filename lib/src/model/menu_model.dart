@@ -20,7 +20,7 @@ class MenuModel {
     productimg: json['product_img']?? '',
     category: json['category']?? '',  
     availablestore:List<String>.from(json['available_store'] ?? []), 
-    addons: json['add_ons']!= null ?List<AddOn>.from(json['add_ons'].map((data) => AddOn.fromjson(data))) : [],  
+    addons: json['add_ons']!= null ? List<AddOn>.from(json['add_ons'].map((data) => AddOn.fromjson(data))) : [],  
     price: json['price'] ?? 0, 
     status: json['status'] ?? '',
     description: json['description'] ?? '', 

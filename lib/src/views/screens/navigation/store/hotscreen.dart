@@ -31,14 +31,22 @@ class _StoreHotScreenState extends State<StoreHotScreen> {
             return CircularProgressIndicator();
           }else if(state is FetchMenuSuccessState){
             final hotlist = state.menuModel.where((element) => element.type == 'hot').toList();
+            if(hotlist.isEmpty) {
+              return Center(
+                child: Text(
+                      'No Menu',
+                      style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                       color: Appcolors.appColors.shade100,
+                    ),
+                    ),
+                );
+            }
             return ListView.builder(
               shrinkWrap: true,
               itemCount: hotlist.length,
               itemBuilder: (context,index){
               final items = hotlist[index];
-            return items.category.isEmpty ? Text('No Menu',style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-              color: Appcolors.appColors.shade100,
-            ),) :Padding(
+            return Padding(
               padding: const EdgeInsets.all(8.0),
               child: Row(
               mainAxisAlignment: MainAxisAlignment.start,

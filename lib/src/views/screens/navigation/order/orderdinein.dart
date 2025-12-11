@@ -77,7 +77,6 @@ class _OrderDineinState extends State<OrderDinein> {
                     crossAxisCount: 2,
                     mainAxisSpacing: 8,
                     crossAxisSpacing: 8,
-                    childAspectRatio: 2 / 2
                     ), 
                     itemCount: state.orderModel.length,
                     itemBuilder: (context,index){ 
@@ -90,7 +89,9 @@ class _OrderDineinState extends State<OrderDinein> {
                           crossAxisAlignment: CrossAxisAlignment.center,
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
-                            Image.network('${Apiurl.apiurl}/uploads/category/${items.categoryimage}'),
+                            AspectRatio(
+                              aspectRatio: 1.5,
+                              child: Image.network('${Apiurl.apiurl}/uploads/category/${items.categoryimage}')),
                             4.vspace,
                             Text(items.categoryname,style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                               fontWeight: FontWeight.w500,

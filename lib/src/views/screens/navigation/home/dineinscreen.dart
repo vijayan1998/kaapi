@@ -178,7 +178,6 @@ void initState(){
                   crossAxisCount: 2,
                   mainAxisSpacing: 8,
                   crossAxisSpacing: 8,
-                  childAspectRatio: 2.3 / 3
                   ), 
                   itemCount: state.menuModel.length,
                   itemBuilder: (context,index){
@@ -194,8 +193,11 @@ void initState(){
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
-                          Image.network('${Apiurl.apiurl}/uploads/menu/${items.productimg}',
-                          errorBuilder: (_, __,___) => Icon(Icons.error,color: Colors.red,),),
+                          AspectRatio(
+                            aspectRatio: 1.5,
+                            child: Image.network('${Apiurl.apiurl}/uploads/menu/${items.productimg}',
+                            errorBuilder: (_, __,___) => Icon(Icons.error,color: Colors.red,),),
+                          ),
                           4.vspace,
                           Text(items.productname,style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                             fontWeight: FontWeight.w500,

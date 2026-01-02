@@ -1,7 +1,9 @@
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:kappi/src/bloc/apiurl.dart';
 import 'package:kappi/src/model/login_model.dart';
 import 'package:http/http.dart' as http;
@@ -54,27 +56,44 @@ final Dio dio = Dio();
     }
   }
 
-  Future<void> userDetails(String userimg,String username,String email) async {
+  Future<void> userDetails(XFile? userimg,String username,String email) async {
     final box = Hive.box('userBox');
     final userid = box.get('userId');
+     FormData formData = FormData.fromMap({
+    'user_name': username,
+    'email': email,
+    if (userimg != null)
+      'user_img': await MultipartFile.fromFile(
+        userimg.path,
+        filename: userimg.path.split('/').last,
+      ),
+  });
     final response = await dio.put('${Apiurl.apiurl}/user/update/$userid',  
-    data: {
-      'user_img': userimg,
-      'user_name':username,
-      'email':email,
-    });
+    data:formData,
+     options: Options(
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    ),);
     if(response.statusCode == 200){
-      throw Exception('User Details Update Successful');
+       debugPrint('User Details Update Successful');
     }
   }
 
-  Future<void> userAddress(String name,String address) async {
+
+  Future<void> userAddress(String name,String number,String address1,String address2,String city,String state,String pincode,bool isVisible) async {
     final box = Hive.box('userBox');
     final userId = box.get('userId');
-    final response = await dio.put('${Apiurl.apiurl}/user/$userId/address',
+    final response = await dio.post('${Apiurl.apiurl}/user/$userId/address',
     data: {
-      'name':name,
-      'location':address
+      'location_name':name,
+      'contact_number':number,
+      'address_line1':address1,
+      'address_line2':address2,
+      'city':city,
+      'state':state,
+      'pin_code':pincode,
+      'is_default':isVisible,
     });
     if(response.statusCode == 200){
       throw Exception('User Address Update Successfully');

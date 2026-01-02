@@ -86,7 +86,7 @@ class _StoreHotScreenState extends State<StoreHotScreen> {
                   ),
                 ),
                 onPressed: () {
-                   Navigator.push(context, MaterialPageRoute(builder: (context) => OrderAddScreen(
+                   Navigator.push(context, MaterialPageRoute(builder: (context) => OrderAddScreen(productid: items.productid,
                     productname: items.productname, productimg: items.productimg, description: items.description, 
                     price: items.price, addons: items.addons!, category: items.category)));
                 },

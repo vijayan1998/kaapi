@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
-import 'package:kappi/src/bloc/apiurl.dart';
 import 'package:kappi/src/bloc/login_bloc.dart';
 import 'package:kappi/src/bloc/login_event.dart';
 import 'package:kappi/src/bloc/login_state.dart';
@@ -64,7 +63,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
                 Center(
-                  child: Image.network(userimg.isNotEmpty ? '${Apiurl.apiurl}/uploads/menu/$userimg' :Appimage.profileimg),
+                  child:  Container(
+                    height: 150,
+                    width: 150,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      shape: BoxShape.circle,
+                      image:DecorationImage(
+                        image: userimg.isNotEmpty ? NetworkImage(userimg) : AssetImage(Appimage.profileimg),
+                        fit: BoxFit.cover)
+                    ),
+                  ),
                 ),
                 8.vspace,
                 Center(

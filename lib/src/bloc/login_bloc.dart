@@ -77,7 +77,8 @@ class UserAddressBloc extends Bloc<LoginEvent,LoginState>{
     on<LoginAddressEvent>((event,emit) async {
       emit(LoginLodingState());
       try {
-        await loginRepository.userAddress(event.name, event.location);
+        await loginRepository.userAddress(event.name, event.contactnumber,event.address1,event.address2,event.city,
+        event.state,event.pincode,event.isVisible);
         emit(LoginSuccessState(loginModel: 'Success'));
       } catch (e) {
         emit(LoginErrorState(message: e.toString()));

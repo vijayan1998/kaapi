@@ -1,6 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
+import 'package:kappi/src/bloc/apiurl.dart';
+import 'package:kappi/src/bloc/login_bloc.dart';
+import 'package:kappi/src/bloc/login_event.dart';
+import 'package:kappi/src/bloc/login_state.dart';
+import 'package:kappi/src/bloc/menu_bloc.dart';
+import 'package:kappi/src/bloc/menu_event.dart';
+import 'package:kappi/src/bloc/menu_state.dart';
 import 'package:kappi/src/model/order_model.dart';
+import 'package:kappi/src/respositiory/api_service.dart';
+import 'package:kappi/src/views/screens/navigation/home/homedetails.dart';
 import 'package:kappi/src/views/utilies/colors.dart';
 import 'package:kappi/src/views/utilies/images.dart';
 import 'package:kappi/src/views/utilies/route_name.dart';
@@ -22,7 +32,23 @@ List<Takeawaymodel> takeList=[
   Takeawaymodel(image: Appimage.coffee3, subtitle: 'Fast Pickup', title: 'Latte'),
   Takeawaymodel(image: Appimage.coffee4, subtitle: 'Fast Pickup', title: 'Mocha'),
 ];
+String username = '';
+String storeid = '';
+@override
+void initState(){
+   // get the storeid in userlist
+    BlocProvider.of<UserBloc>(context).add(FetchLoginEvent());
+    context.read<UserBloc>().stream.listen((state) {
+      if (state is FetchLoginSuccessState) {
+        username = state.loginModel.username;
+        setState(() {
+          storeid = state.loginModel.store;
+        });
+      }
+    });
+  super.initState();
 
+}
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -31,7 +57,7 @@ List<Takeawaymodel> takeList=[
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           16.vspace,
-            Text('Good morning, Ethan',style: Theme.of(context).textTheme.titleLarge!.copyWith(
+            Text('Good morning,$username',style: Theme.of(context).textTheme.titleLarge!.copyWith(
               color: Appcolors.appColors.shade100,
               fontWeight: FontWeight.w500,
             ),),
@@ -73,7 +99,20 @@ List<Takeawaymodel> takeList=[
               fontWeight: FontWeight.w500,
             ),),
              16.vspace,
-            GridView.builder(
+
+             BlocProvider(create: (_) => MenuBloc(StoreRepository()),
+             child: BlocBuilder<MenuBloc,MenuState>(builder: (context,state){
+              if(state is FetchMenuInitiState){
+                Future.delayed(Duration(seconds: 2),() =>{
+                   BlocProvider.of<MenuBloc>(context).add(FetchMenuEvent(storeid:storeid)),
+                });
+            
+                return Center(child: CircularProgressIndicator());
+              }
+              else if(state is FetchMenuLoadingState){
+                return Center(child: CircularProgressIndicator());
+              } else if(state is FetchMenuSuccessState){
+                return   GridView.builder(
                   shrinkWrap: true,
                   padding: EdgeInsets.all(0),
                   physics: NeverScrollableScrollPhysics(),
@@ -81,52 +120,64 @@ List<Takeawaymodel> takeList=[
                     crossAxisCount: 2,
                     mainAxisSpacing: 8,
                     crossAxisSpacing: 8,
-                    childAspectRatio: 2.3 / 3
+                    childAspectRatio: 2 / 2.5
                     ), 
-                    itemCount: takeList.length,
+                    itemCount: state.menuModel.length,
                     itemBuilder: (context,index){
+                      final items = state.menuModel[index];
                       return InkWell(
                         onTap: (){
-                          // Get.toNamed(Appnames.homedetails);
+                            Navigator.push(context, MaterialPageRoute(builder: (context) => HomeDetailsScreen(
+                            category:items.category, productimg: items.productimg, productid: items.productid,
+                            productname: items.productname, description: items.description, 
+                            addons: items.addons!, price: items.price)));
                         },
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
-                            Image.asset(takeList[index].image),
+                            AspectRatio(
+                              aspectRatio: 1.5,
+                              child: Image.network('${Apiurl.apiurl}/uploads/menu/${items.productimg}')),
                             4.vspace,
                             Row(
                               mainAxisAlignment: MainAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.max,
                               children: [
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text(takeList[index].title,style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                              fontWeight: FontWeight.w500,
-                              color: Appcolors.appColors.shade100,
-                              fontSize: 16
-                            ),),
+                                    SizedBox(
+                                      width: MediaQuery.of(context).size.width / 2.5,
+                                      child: Text(items.productname,style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                                                                    fontWeight: FontWeight.w500,
+                                                                    color: Appcolors.appColors.shade100,
+                                                                    fontSize: 16
+                                                                  ),),
+                                    ),
                             4.vspace,
-                              Text(takeList[index].subtitle,style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                              Text(items.price.toString(),style: Theme.of(context).textTheme.bodySmall!.copyWith(
                                 color: Color(0xffCFB88C),
                                   fontWeight: FontWeight.w500
                                 ),),
                                   ],
                                 ),
-                              24.hspace,
-                                Container(
-                                  padding: EdgeInsets.all(6),
-                                  decoration: BoxDecoration(
-                                    color: Appcolors.appColors.shade300,
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                  child: Icon(Icons.add,color: Appcolors.appColors.shade100,size: 20,)),
+                               
                               ],
                             ),
                           ],
                         ),
                       );
-                    }),
+                    });
+              } else if(state is FetchMenuErrorState){
+                return Text(state.message,style: TextStyle(
+                  color: Colors.white,
+                ),);
+              }
+              return Container();
+
+             }),),
+           
                 24.vspace,
                             Custombuttonwidget(text: 'Go to cart', 
                             color: Appcolors.appColors.shade600, 

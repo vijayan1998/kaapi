@@ -8,7 +8,7 @@ class StoreModel{
   final String status;
   final double latitude;
   final double langitude;
-  final int servicemeters;
+  // final int servicemeters;
 
   StoreModel({
     required this.storeid,
@@ -18,7 +18,7 @@ class StoreModel{
     required this.langitude,
     required this.latitude,
     required this.openinghours,
-    required this.servicemeters,
+    // required this.servicemeters,
     required this.status,
     required this.storenumber,
   });
@@ -31,7 +31,7 @@ class StoreModel{
     langitude: json['latitude'] ?? '', 
     latitude: json['longitude'] ?? '', 
     openinghours: json['opening_hours']?? '', 
-    servicemeters: json['serviceRadiusMeters']?? '', 
+    // servicemeters: json['serviceRadiusMeters']?? '', 
     status: json['status']?? '', 
     storenumber: json['store_number'] ?? '');
   }
@@ -46,7 +46,7 @@ class StoreModel{
       'opening_hours':openinghours,
       'latitude': latitude,
       'longitude':langitude,
-      'serviceRadiusMeters':servicemeters,
+      // 'serviceRadiusMeters':servicemeters,
       'status':status, 
     };
   }

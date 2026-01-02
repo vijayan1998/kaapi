@@ -1,3 +1,5 @@
+import 'package:image_picker/image_picker.dart';
+
 abstract class LoginEvent {}
 
 class LoginPostEvent extends LoginEvent{
@@ -17,7 +19,7 @@ class LocationPostEvent extends LoginEvent{
 }
 
 class LoginUpdateEvent extends LoginEvent{
-  final String userimg;
+  final XFile? userimg;
   final String username;
   final String email;
 
@@ -26,7 +28,14 @@ class LoginUpdateEvent extends LoginEvent{
 
 class LoginAddressEvent extends LoginEvent{
   final String name;
-  final String location;
+  final String contactnumber;
+  final String address1;
+  final String address2;
+  final String city;
+  final String state;
+  final String pincode;
+  final bool isVisible;
 
-  LoginAddressEvent({required this.location,required this.name});
+  LoginAddressEvent({required this.contactnumber,required this.name,required this.address1,required this.city,
+  required this.address2,required this.isVisible,required this.pincode,required this.state});
 }

@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:kappi/src/bloc/apiurl.dart';
+import 'package:kappi/src/bloc/cart_bloc.dart';
+import 'package:kappi/src/bloc/cart_event.dart';
+import 'package:kappi/src/bloc/cart_state.dart';
 import 'package:kappi/src/model/menu_model.dart';
+import 'package:kappi/src/respositiory/api_service.dart';
 import 'package:kappi/src/views/screens/navigation/navigationscreen.dart';
 import 'package:kappi/src/views/utilies/colors.dart';
 import 'package:kappi/src/views/utilies/images.dart';
@@ -11,12 +16,13 @@ import 'package:percent_indicator/linear_percent_indicator.dart';
 
 class HomeDetailsScreen extends StatefulWidget {
   final String category;
+  final String productid;
   final String productimg;
   final String productname;
   final String description;
   final List<AddOn> addons;
   final int price;
-  const HomeDetailsScreen({super.key, required this.category, required this.productimg, required this.productname, required this.description, required this.addons, required this.price});
+  const HomeDetailsScreen({super.key, required this.category, required this.productimg, required this.productname, required this.description, required this.addons, required this.price,required this.productid});
 
   @override
   State<HomeDetailsScreen> createState() => _HomeDetailsScreenState();
@@ -278,8 +284,33 @@ class _HomeDetailsScreenState extends State<HomeDetailsScreen> {
               ],
              ),
              16.vspace,
-             Custombuttonwidget(text: '\$4.50 | Add to Cart', color: Color(0xff362417), 
-             textColor: Appcolors.appColors.shade100,onPressed: (){},)
+             BlocProvider(create: (_) => CartBloc(StoreRepository()),
+              child: BlocConsumer<CartBloc,CartState>( 
+                listener: (context,state){
+                  if(state is CartInitialState){
+
+                  }
+                  if(state is CartSuccessState){
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.message.toString(),
+                style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                  color: Appcolors.appColors.shade100,
+                ),)));
+                  }
+                   if(state is CartErrorState){
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.error,style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                      color: Appcolors.appColors.shade100,
+                    ),)));
+                  }
+                },
+              builder: (context,state){
+                 bool isLoading = state is CartLoadingState;
+                 return Custombuttonwidget(text: '\$${widget.price} | Add to Cart', color: Color(0xff362417), 
+             textColor: Appcolors.appColors.shade100,onPressed: (){  
+                context.read<CartBloc>().add(CartEventState(productid: widget.productid)); 
+             },
+             isLoading: isLoading,);
+              },),),
+            
             ],
           ),
         ),

@@ -19,7 +19,13 @@ class EditAddressScreens extends StatefulWidget {
 
 class _EditAddressScreensState extends State<EditAddressScreens> {
   TextEditingController name = TextEditingController();
-  TextEditingController address = TextEditingController();
+  TextEditingController contactnumber = TextEditingController();
+  TextEditingController address1 = TextEditingController();
+  TextEditingController address2 = TextEditingController();
+  TextEditingController city = TextEditingController();
+  TextEditingController state1 = TextEditingController();
+  TextEditingController pincode = TextEditingController();
+  bool isvalue = true;
   @override
   void initState(){
     //  name.text = widget.name.toString();
@@ -45,14 +51,13 @@ class _EditAddressScreensState extends State<EditAddressScreens> {
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 24,horizontal:16),
-          child: Column(
+          child:  Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-               24.vspace,
-               Text('Address',
-              style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+              Text('FullName',style: Theme.of(context).textTheme.titleSmall!.copyWith(
                 color: Appcolors.appColors.shade100,
+                fontWeight: FontWeight.w600,
               ),),
               8.vspace,
               TextFormField(
@@ -61,35 +66,138 @@ class _EditAddressScreensState extends State<EditAddressScreens> {
                   color: Appcolors.appColors.shade100,
                 ),
                 decoration: InputDecoration(
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                    borderSide: BorderSide(
-                      width: 1,
-                      color: Color(0xff737373),
-                    ),
-                  )
+                  border: InputBorder.none,
+                  fillColor: Color(0xff1F1F1F),
+                  filled: true,
+                  suffixIcon: Icon(Icons.person_2_outlined,color: Color(0xff80736B),)
                 ),
               ),
               16.vspace,
-               8.vspace,
+               Text('Phone',style: Theme.of(context).textTheme.titleSmall!.copyWith(
+                color: Appcolors.appColors.shade100,
+                fontWeight: FontWeight.w600,
+              ),),
+              8.vspace,
               TextFormField(
-                controller: address,
+                controller: contactnumber,
                 style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                   color: Appcolors.appColors.shade100,
                 ),
-                minLines: 6,
-                maxLines: 8,
                 decoration: InputDecoration(
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                    borderSide: BorderSide(
-                      width: 1,
-                      color: Color(0xff737373),
-                    ),
-                  )
+                  border: InputBorder.none,
+                  fillColor: Color(0xff1F1F1F),
+                  filled: true,
+                  suffixIcon: Icon(Icons.call_outlined,color: Color(0xff80736B),)
                 ),
               ),
-             
+              16.vspace,
+              Text('Address Line 1',style: Theme.of(context).textTheme.titleSmall!.copyWith(
+                color: Appcolors.appColors.shade100,
+                fontWeight: FontWeight.w600,
+              ),),
+              8.vspace,
+              TextFormField(
+                controller: address1,
+                style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                  color: Appcolors.appColors.shade100,
+                ),
+                decoration: InputDecoration(
+                  border: InputBorder.none,
+                  fillColor: Color(0xff1F1F1F),
+                  filled: true,
+                  suffixIcon: Icon(Icons.location_city,color: Color(0xff80736B),)
+                ),
+              ),
+              16.vspace,
+              Text('Address Line 2',style: Theme.of(context).textTheme.titleSmall!.copyWith(
+                color: Appcolors.appColors.shade100,
+                fontWeight: FontWeight.w600,
+              ),),
+              8.vspace,
+              TextFormField(
+                controller: address2,
+                style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                  color: Appcolors.appColors.shade100,
+                ),
+                decoration: InputDecoration(
+                  border: InputBorder.none,
+                  fillColor: Color(0xff1F1F1F),
+                  filled: true,
+                  suffixIcon: Icon(Icons.location_city_outlined,color: Color(0xff80736B),)
+                ),
+              ),
+              16.vspace,
+              Text('City',style: Theme.of(context).textTheme.titleSmall!.copyWith(
+                color: Appcolors.appColors.shade100,
+                fontWeight: FontWeight.w600,
+              ),),
+              8.vspace,
+              TextFormField(
+                controller: city,
+                style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                  color: Appcolors.appColors.shade100,
+                ),
+                decoration: InputDecoration(
+                  border: InputBorder.none,
+                  fillColor: Color(0xff1F1F1F),
+                  filled: true,
+                ),
+              ),
+              16.vspace,
+              Text('State',style: Theme.of(context).textTheme.titleSmall!.copyWith(
+                color: Appcolors.appColors.shade100,
+                fontWeight: FontWeight.w600,
+              ),),
+              8.vspace,
+              TextFormField(
+                controller: state1,
+                style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                  color: Appcolors.appColors.shade100,
+                ),
+                decoration: InputDecoration(
+                  border: InputBorder.none,
+                  fillColor: Color(0xff1F1F1F),
+                  filled: true,
+                ),
+              ),
+              16.vspace,
+              Text('Pin/Zin code',style: Theme.of(context).textTheme.titleSmall!.copyWith(
+                color: Appcolors.appColors.shade100,
+                fontWeight: FontWeight.w600,
+              ),),
+              8.vspace,
+              TextFormField(
+                controller: pincode,
+                style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                  color: Appcolors.appColors.shade100,
+                ),
+                decoration: InputDecoration(
+                  border: InputBorder.none,
+                  fillColor: Color(0xff1F1F1F),
+                  filled: true,
+                  suffixIcon: Icon(Icons.location_on_outlined,color: Color(0xff80736B),)
+                ),
+              ),
+              16.vspace,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                   Text('Set as Default Address',style: Theme.of(context).textTheme.titleSmall!.copyWith(
+                color: Appcolors.appColors.shade100,
+                fontWeight: FontWeight.w600,
+              ),),
+              Switch(
+                inactiveThumbColor: Appcolors.appColors.shade100,
+                inactiveTrackColor: Appcolors.appColors.shade50,
+                value: false, 
+              onChanged: (value){
+                setState(() {
+                  isvalue = value;
+                });
+              })
+                ],
+              ),
+          16.vspace,
             ],
           ),
         ),
@@ -111,7 +219,8 @@ class _EditAddressScreensState extends State<EditAddressScreens> {
                   return Padding(padding: EdgeInsets.all(16),
       child: Custombuttonwidget(text: 'Save', isLoading: isLoading,
       onPressed: (){
-        context.read<UserAddressBloc>().add(LoginAddressEvent(location: address.text, name: name.text));
+        context.read<UserAddressBloc>().add(LoginAddressEvent(contactnumber: contactnumber.text, name: name.text,
+        address1: address1.text,address2: address2.text,city: city.text,pincode: pincode.text,isVisible: isvalue,state: state1.text));
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Address Successfully')));
       }, 
      color: Color(0xff40332B),  

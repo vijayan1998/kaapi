@@ -111,7 +111,17 @@ class _EditScreenState extends State<EditScreen> {
                                         File(image!.path),
                                       ),
                                       fit: BoxFit.cover)),
-                            ): Image.asset(Appimage.profileimg),
+                            ) : widget.image!.isEmpty ? Image.asset(Appimage.profileimg) : Container(
+                              height: 120,
+                              width: 120,
+                              decoration: BoxDecoration(
+                                shape:BoxShape.circle,
+                                color: Colors.white,
+                                image: DecorationImage(
+                                  image: NetworkImage('${widget.image}',),
+                                  fit: BoxFit.cover), 
+                              ),
+                              ),
                     Positioned(
                       right: -5,
                       bottom: 6,
@@ -196,7 +206,7 @@ class _EditScreenState extends State<EditScreen> {
                 title: Text(widget.address!.isEmpty ? 'Home' :widget.address!.first.name.toString(),style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                   color: Appcolors.appColors.shade100,
                 ),),
-                subtitle: Text(widget.address!.isEmpty ? '123 Asssmdg' :widget.address!.first.address.toString(),style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                subtitle: Text(widget.address!.isEmpty ? '123 Asssmdg' :widget.address!.first.address1.toString(),style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                   color: Appcolors.appColors.shade100,
                 ),),
                 trailing: InkWell(child: Image.asset(Appimage.edit),onTap: (){
@@ -237,9 +247,9 @@ class _EditScreenState extends State<EditScreen> {
                 isLoading: isLoading,
                 textColor: Appcolors.appColors.shade100,
                 onPressed: (){
-                  final fileName = image != null ? image!.path.split('/').last : "";
+                  // final fileName = image != null ? image!.path.split('/').last : "";
                   context.read<UserDetailsBloc>().add(LoginUpdateEvent(email: email.text, 
-                  userimg: fileName, username: name.text));
+                  userimg: image, username: name.text));
                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Update Successfully')));
                 },);
               },),),

@@ -178,6 +178,7 @@ void initState(){
                   crossAxisCount: 2,
                   mainAxisSpacing: 8,
                   crossAxisSpacing: 8,
+                  childAspectRatio:2/2.5
                   ), 
                   itemCount: state.menuModel.length,
                   itemBuilder: (context,index){
@@ -185,7 +186,7 @@ void initState(){
                     return InkWell(
                       onTap: (){
                           Navigator.push(context, MaterialPageRoute(builder: (context) => HomeDetailsScreen(
-                            category:items.category, productimg: items.productimg, 
+                            category:items.category, productimg: items.productimg,productid: items.productid, 
                             productname: items.productname, description: items.description, 
                             addons: items.addons!, price: items.price)));
                       },

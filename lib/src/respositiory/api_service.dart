@@ -1,7 +1,9 @@
 import 'dart:convert';
 
+import 'package:hive/hive.dart' show Hive;
 import 'package:http/http.dart' as http;
 import 'package:kappi/src/bloc/apiurl.dart';
+import 'package:kappi/src/model/cart_model.dart';
 import 'package:kappi/src/model/menu_model.dart';
 import 'package:kappi/src/model/order_model.dart';
 import 'package:kappi/src/model/store_model.dart';
@@ -9,6 +11,8 @@ import 'package:dio/dio.dart';
 class StoreRepository{
 
   final Dio dio = Dio();
+  final box = Hive.box('userBox');
+    get userId => box.get('userId');
 
   //  Future<List<StoreModel>> fetchallList() async{
   //   final String url = 'http://10.36.62.5:5000/store/getallstores';
@@ -101,6 +105,42 @@ class StoreRepository{
     } catch (e) {
       throw Exception('Fetch Error');
     }
+  }
+
+  Future<void> cartDetails (String productId) async {
+    
+    final response = await dio.post('${Apiurl.apiurl}/cart/$userId/add',
+    data: {
+      'productId':productId,
+    });
+    if(response.statusCode != 200){
+      throw Exception('Failed to update cart');
+    }
+  }
+
+  Future<void> cartCount (String productId,String count) async {
+    
+    final response = await dio.post('${Apiurl.apiurl}/cart/$userId/add',
+    data: {
+      'productId':productId,
+      'count': count,
+    });
+    if(response.statusCode != 200){
+      throw Exception('Failed to update cart count');
+    }
+  }
+  Future<CartModel> cartList() async {
+   
+      final response = await http.get(Uri.parse('${Apiurl.apiurl}/cart/$userId'));
+      if(response.statusCode ==200){
+        final decoded = json.decode(response.body);
+        // print('dfkdfh:$decoded');
+        // List<dynamic> responseData = decoded['data'];
+        // print('dfhdk:$responseData');
+        return CartModel.fromJson(decoded['data']);
+      }else{
+        throw Exception('Fetch Data Error');
+      }
   }
 
 }

@@ -8,6 +8,7 @@ import 'package:kappi/src/bloc/menu_bloc.dart';
 import 'package:kappi/src/bloc/menu_event.dart';
 import 'package:kappi/src/bloc/menu_state.dart';
 import 'package:kappi/src/respositiory/api_service.dart';
+import 'package:kappi/src/views/screens/navigation/home/cartscreen.dart';
 import 'package:kappi/src/views/screens/navigation/order/orderaddscreen.dart';
 import 'package:kappi/src/views/utilies/colors.dart';
 import 'package:kappi/src/views/utilies/sizedbox.dart';
@@ -79,11 +80,14 @@ class _HotScreenState extends State<HotScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
-                  Text(
-                    items.productname,
-                    style: Theme.of(context).textTheme.titleMedium!.copyWith(
-                      color: Appcolors.appColors.shade100,
-                      fontWeight: FontWeight.w600,
+                  SizedBox(
+                    width:MediaQuery.of(context).size.width / 2,
+                    child: Text(
+                      items.productname,
+                      style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                        color: Appcolors.appColors.shade100,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                   ),
                   SizedBox(
@@ -108,6 +112,7 @@ class _HotScreenState extends State<HotScreen> {
                                 ),
                                 onPressed: () {
                   Navigator.push(context, MaterialPageRoute(builder: (context) => OrderAddScreen(
+                    productid: items.productid,
                     productname: items.productname, productimg: items.productimg, description: items.description, 
                     price: items.price, addons: items.addons!, category: items.category)));
                                 },
@@ -144,7 +149,9 @@ class _HotScreenState extends State<HotScreen> {
                   borderRadius: BorderRadiusGeometry.circular(12),
                 ),
               ),
-              onPressed: () {},
+              onPressed: () {
+                Navigator.push(context,MaterialPageRoute(builder: (context) => CartScreen()));
+              },
               child: Text(
                 'View Cart',
                 style: Theme.of(context).textTheme.titleSmall!.copyWith(

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:kappi/src/model/member_model.dart';
 import 'package:kappi/src/views/screens/navigation/navigationscreen.dart';
 import 'package:kappi/src/views/utilies/colors.dart';
 import 'package:kappi/src/views/utilies/images.dart';
@@ -8,13 +9,24 @@ import 'package:kappi/src/views/widget/custom_button.dart';
 
 
 class MembershipDetailScreen extends StatefulWidget {
-  const MembershipDetailScreen({super.key});
+  final String? planname;
+  final String? planimg;
+  final String? description;
+  final String? price;
+  final String? termconditions;
+  final String? cancelpolicy;
+  final List<PlanBenefit>? planbenefit;
+  const MembershipDetailScreen({super.key, this.planname, this.planimg, this.description, this.price, this.termconditions, this.cancelpolicy,  this.planbenefit});
 
   @override
   State<MembershipDetailScreen> createState() => _MembershipDetailScreenState();
 }
 
 class _MembershipDetailScreenState extends State<MembershipDetailScreen> {
+  @override 
+  void initState(){
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -55,19 +67,19 @@ class _MembershipDetailScreenState extends State<MembershipDetailScreen> {
               Image.asset(Appimage.membership2,width: MediaQuery.of(context).size.width,
               fit: BoxFit.fill),
               16.vspace,
-                Text('Gold Membership',
+                Text(widget.planname.toString(),
             style: Theme.of(context).textTheme.titleMedium!.copyWith(
               color: Appcolors.appColors.shade100,
               fontWeight: FontWeight.w700,
               fontSize: 18
             ),),
             8.vspace,
-              Text('Enjoy exclusive perks and discounts on your favorite brews.',
+              Text(widget.description.toString(),
             style: Theme.of(context).textTheme.bodyMedium!.copyWith(
               color: Appcolors.appColors.shade100,
             ),),
             8.vspace,
-            Text('\$19.99 / month',
+            Text(widget.price.toString(),
             style: Theme.of(context).textTheme.bodyMedium!.copyWith(
               color: Appcolors.appColors.shade100,
             ),),
@@ -78,58 +90,68 @@ class _MembershipDetailScreenState extends State<MembershipDetailScreen> {
               fontWeight: FontWeight.w700,
             ),),
             16.vspace,
-             ListTile(
+            ListView.builder(
+              padding: EdgeInsets.all(0),
+              physics: NeverScrollableScrollPhysics(),
+              shrinkWrap: true,
+              itemCount: widget.planbenefit!.length,
+              itemBuilder: (context,index){
+                final benefit = widget.planbenefit![index];
+                return ListTile(
               contentPadding: EdgeInsets.all(0),
-              leading: Image.asset(Appimage.discount),
-              title: Text('Discount',
+              leading: Image.asset(benefit.name.toString() == 'Discount'?  Appimage.discount : benefit.name.toString() == 'Free Delivery' ? Appimage.freedelivery
+              : benefit.name.toString() == 'Support' ? Appimage.support : Appimage.notifications1 ),
+              title: Text(benefit.name.toString(),
             style: Theme.of(context).textTheme.bodyMedium!.copyWith(
               color: Appcolors.appColors.shade100,
               fontWeight: FontWeight.w600
             ),),
-            subtitle: Text('Save 15% on all coffee orders',
+            subtitle: Text(benefit.description.toString(),
             style: Theme.of(context).textTheme.bodySmall!.copyWith(
               color: Appcolors.appColors.shade100,
             ),),
-            ),
-            ListTile(
-              contentPadding: EdgeInsets.all(0),
-              leading: Image.asset(Appimage.freedelivery),
-              title: Text('Free Delivery',
-            style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-              color: Appcolors.appColors.shade100,
-              fontWeight: FontWeight.w600
-            ),),
-            subtitle: Text('Free delivery on orders over \$20',
-            style: Theme.of(context).textTheme.bodySmall!.copyWith(
-              color: Appcolors.appColors.shade100,
-            ),),
-            ),
-             ListTile(
-              contentPadding: EdgeInsets.all(0),
-              leading: Image.asset(Appimage.notifications1),
-              title: Text('Exclusive Blends',
-            style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-              color: Appcolors.appColors.shade100,
-              fontWeight: FontWeight.w600
-            ),),
-            subtitle: Text('Access to exclusive coffee blends',
-            style: Theme.of(context).textTheme.bodySmall!.copyWith(
-              color: Appcolors.appColors.shade100,
-            ),),
-            ),
-             ListTile(
-              contentPadding: EdgeInsets.all(0),
-              leading: Image.asset(Appimage.support),
-              title: Text('Priority Support',
-            style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-              color: Appcolors.appColors.shade100,
-              fontWeight: FontWeight.w600
-            ),),
-            subtitle: Text('Priority customer support',
-            style: Theme.of(context).textTheme.bodySmall!.copyWith(
-              color: Appcolors.appColors.shade100,
-            ),),
-            ),
+            ); 
+              },),
+            
+            // ListTile(
+            //   contentPadding: EdgeInsets.all(0),
+            //   leading: Image.asset(Appimage.freedelivery),
+            //   title: Text(widget.planbenefit!.first.name.toString(),
+            // style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+            //   color: Appcolors.appColors.shade100,
+            //   fontWeight: FontWeight.w600
+            // ),),
+            // subtitle: Text(widget.planbenefit!.first.description.toString(),
+            // style: Theme.of(context).textTheme.bodySmall!.copyWith(
+            //   color: Appcolors.appColors.shade100,
+            // ),),
+            // ),
+            //  ListTile(
+            //   contentPadding: EdgeInsets.all(0),
+            //   leading: Image.asset(Appimage.notifications1),
+            //   title: Text('Exclusive Blends',
+            // style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+            //   color: Appcolors.appColors.shade100,
+            //   fontWeight: FontWeight.w600
+            // ),),
+            // subtitle: Text('Access to exclusive coffee blends',
+            // style: Theme.of(context).textTheme.bodySmall!.copyWith(
+            //   color: Appcolors.appColors.shade100,
+            // ),),
+            // ),
+            //  ListTile(
+            //   contentPadding: EdgeInsets.all(0),
+            //   leading: Image.asset(Appimage.support),
+            //   title: Text('Priority Support',
+            // style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+            //   color: Appcolors.appColors.shade100,
+            //   fontWeight: FontWeight.w600
+            // ),),
+            // subtitle: Text('Priority customer support',
+            // style: Theme.of(context).textTheme.bodySmall!.copyWith(
+            //   color: Appcolors.appColors.shade100,
+            // ),),
+            // ),
             16.vspace,
              Text('Terms & Validity',
             style: Theme.of(context).textTheme.titleLarge!.copyWith(
@@ -137,7 +159,7 @@ class _MembershipDetailScreenState extends State<MembershipDetailScreen> {
               fontWeight: FontWeight.w700,
             ),),
             8.vspace,
-            Text('Membership is valid for one month from the date of purchase and renews automatically. Cancel anytime.',
+            Text(widget.termconditions.toString(),
             style: Theme.of(context).textTheme.bodyMedium!.copyWith(
               color: Appcolors.appColors.shade100,
             ),),
@@ -166,7 +188,7 @@ class _MembershipDetailScreenState extends State<MembershipDetailScreen> {
                     ],
                   ),
                   8.vspace,
-                    Text('You can cancel your membership at any time. Cancellations must be made at least 24 hours before the next billing cycle to avoid charges.',
+                    Text(widget.cancelpolicy.toString(),
             style: Theme.of(context).textTheme.bodyMedium!.copyWith(
               color: Appcolors.appColors.shade100,
             ),),

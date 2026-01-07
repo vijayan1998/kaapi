@@ -1,5 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
+import 'package:kappi/src/bloc/apiurl.dart';
+import 'package:kappi/src/bloc/member_bloc.dart';
+import 'package:kappi/src/bloc/member_event.dart';
+import 'package:kappi/src/bloc/member_state.dart';
+import 'package:kappi/src/respositiory/api_service.dart';
+import 'package:kappi/src/views/screens/navigation/membership/membershipdetail.dart';
 import 'package:kappi/src/views/utilies/colors.dart';
 import 'package:kappi/src/views/utilies/images.dart';
 import 'package:kappi/src/views/utilies/route_name.dart';
@@ -85,7 +92,23 @@ class _MembershipScreenState extends State<MembershipScreen> {
               fontWeight: FontWeight.w600,
             ),),
           ),
-           Container(
+          BlocProvider(create: (_)=> MemberBloc(StoreRepository()),
+          child: BlocBuilder<MemberBloc,MemberState>(
+            builder: (context,state){
+            if(state is MemberinitialState){
+              BlocProvider.of<MemberBloc>(context).add(MemberFetchEvent());
+              return CircularProgressIndicator();
+            }else if(state is MemberLoadingState){
+              return CircularProgressIndicator();
+            }else if(state is MemberSuccessState){
+             return ListView.builder(
+              padding: EdgeInsets.all(0),
+              physics: NeverScrollableScrollPhysics(),
+              itemCount: state.memberModel.length,
+              shrinkWrap: true,
+              itemBuilder: (context,index){
+                final member = state.memberModel[index];
+            return Container(
             padding: EdgeInsets.all(16),
             margin: EdgeInsets.all(8),
             decoration: BoxDecoration(
@@ -99,99 +122,41 @@ class _MembershipScreenState extends State<MembershipScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [ 
-                    Text('Free',style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                    Text(member.planname.toString(),style: Theme.of(context).textTheme.titleLarge!.copyWith(
                       color: Appcolors.appColors.shade100,
                       fontWeight: FontWeight.w600
                     ),),
                     4.vspace,
                      SizedBox(
                       width: MediaQuery.of(context).size.width / 2,
-                       child: Text('Enjoy basic benefits and access to our coffee shop',style: Theme.of(context).textTheme.titleSmall!.copyWith(
+                       child: Text(member.plandescription.toString(),style: Theme.of(context).textTheme.titleSmall!.copyWith(
                         color: Appcolors.appColors.shade400,
                                            ),),
                      ),
                     12.vspace,
-                    CommonButtonWidget(text: 'Join',
+                    CommonButtonWidget(text: member.planname.toString() == 'Free' ?  'Join' : 'Subscribe',
                     onTap: (){
-                      Get.toNamed(Appnames.membershipdetails);
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => MembershipDetailScreen(
+                        planname: member.planname,planimg: member.planimg,description: member.plandescription,
+                        price: member.price.toString(),termconditions: member.termscondition,cancelpolicy: member.cancelpolicy,
+                        planbenefit: member.planbenefits,
+                      )));
                     },),
                   ],
                 ),
-                Image.asset(Appimage.member2),
+                Image.network('${Apiurl.apiurl}/uploads/membership/${member.planimg}'),
               ],
             ),
-          ),
-           Container(
-            padding: EdgeInsets.all(16),
-            margin: EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(6),
-              color: Color(0xff211712),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [ 
-                    Text('Gold',style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                      color: Appcolors.appColors.shade100,
-                      fontWeight: FontWeight.w600
-                    ),),
-                    4.vspace,
-                     SizedBox(
-                      width: MediaQuery.of(context).size.width / 2,
-                       child: Text('Unlock exclusive discounts and early access to new blends',style: Theme.of(context).textTheme.titleSmall!.copyWith(
-                        color: Appcolors.appColors.shade400,
-                                           ),),
-                     ),
-                    12.vspace,
-                    CommonButtonWidget(text: 'Subscribe',
-                    onTap: (){
-                      Get.toNamed(Appnames.membershipdetails);
-                    },),
-                  ],
-                ),
-                Image.asset(Appimage.member3),
-              ],
-            ),
-          ),
-           Container(
-            padding: EdgeInsets.all(16),
-            margin: EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(6),
-              color: Color(0xff211712),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [ 
-                    Text('VIP',style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                      color: Appcolors.appColors.shade100,
-                      fontWeight: FontWeight.w600
-                    ),),
-                    4.vspace,
-                     SizedBox(
-                      width: MediaQuery.of(context).size.width / 2,
-                       child: Text('Experience the ultimate coffee journey with premium perks',style: Theme.of(context).textTheme.titleSmall!.copyWith(
-                        color: Appcolors.appColors.shade400,
-                                           ),),
-                     ),
-                    12.vspace,
-                    CommonButtonWidget(text: 'Subscribe',onTap: (){
-                      Get.toNamed(Appnames.membershipdetails);
-                    },),
-                  ],
-                ),
-                Image.asset(Appimage.member4),
-              ],
-            ),
-          ),
+          );
+              });
+            } else if(state is MemberErrorState){
+              return Text(state.toString(),style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                color: Appcolors.appColors.shade100,
+              ),);
+            }
+            return Container();
+            }
+            ),),
           ],
         ),
       ),

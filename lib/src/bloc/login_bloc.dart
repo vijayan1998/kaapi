@@ -87,3 +87,36 @@ class UserAddressBloc extends Bloc<LoginEvent,LoginState>{
   }
 }
 
+class UserUpdateAddressBloc extends Bloc<LoginEvent,LoginState>{
+  final LoginRepository loginRepository;
+
+  UserUpdateAddressBloc(this.loginRepository) : super(LoginStateintialState()){
+    on<LoginUpdateAddressEvent>((event,emit) async{
+      emit(LoginLodingState());
+      try {
+        await loginRepository.updateAddress(event.name, event.contactnumber, event.address, event.address2, event.city, event.state, event.pincode, event.isdefault, event.addressid);
+        emit(LoginSuccessState(loginModel: 'Success'));
+      } catch (e) {
+        emit(LoginErrorState(message: e.toString()));
+      }
+    });
+  }
+}
+
+
+class UserDeleteAddressBloc extends Bloc<LoginEvent,LoginState>{
+final LoginRepository loginRepository;
+  UserDeleteAddressBloc(this.loginRepository) : super(LoginStateintialState()){
+    on<LoginAddressDeleteEvent>((event,emit) async {
+      emit(LoginLodingState());
+      try {
+        await loginRepository.deleteAddress(event.addressid);
+        emit(LoginSuccessState(loginModel: 'Success'));
+      } catch (e) {
+        emit(LoginErrorState(message: e.toString()));
+      }
+    });
+  }
+
+}
+

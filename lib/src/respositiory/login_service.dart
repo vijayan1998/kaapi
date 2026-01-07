@@ -12,6 +12,8 @@ class LoginRepository {
 final Dio dio = Dio();
   
   String userid = '';
+   final box = Hive.box('userBox');
+    get userId => box.get('userId');
 
   Future<Map<String,dynamic>> login(String phone) async {
     final response = await dio.post('${Apiurl.apiurl}/user/createuser',
@@ -95,8 +97,35 @@ final Dio dio = Dio();
       'pin_code':pincode,
       'is_default':isVisible,
     });
-    if(response.statusCode == 200){
-      throw Exception('User Address Update Successfully');
+    if(response.statusCode != 200){
+      throw Exception('User Address Failed');
+    }
+  }
+
+   Future<void> updateAddress(String name,String number,String address1,String address2,String city,String state,String pincode,bool isVisible,String addressid) async {
+   
+    final response = await dio.put('${Apiurl.apiurl}/user/$userId/address/$addressid',
+    data: {
+      'location_name':name,
+      'contact_number':number,
+      'address_line1':address1,
+      'address_line2':address2,
+      'city':city,
+      'state':state,
+      'pin_code':pincode,
+      'is_default':isVisible,
+    });
+    if(response.statusCode != 200){
+      throw Exception(' Update Failed');
+    }
+  }
+
+  Future<void> deleteAddress(String addressid) async{
+    print('dhjd:');
+    final response = await dio.delete('${Apiurl.apiurl}/user/$userId/address/$addressid');
+    print('ffd:${response.data}');
+    if(response.statusCode != 200){
+      throw Exception('Address is not delete');
     }
   }
 }

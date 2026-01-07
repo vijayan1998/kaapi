@@ -8,6 +8,20 @@ class LoginPostEvent extends LoginEvent{
   LoginPostEvent({required this.phone});
 }
 
+class LoginUpdateAddressEvent extends LoginEvent{
+  final String addressid;
+  final String name;
+  final String contactnumber;
+  final String address;
+  final String address2;
+  final String city;
+  final String state;
+  final String pincode;
+  final bool isdefault;
+
+  LoginUpdateAddressEvent({required this.name,required this.contactnumber,required this.address,required this.address2,required this.city,required this.state,required this.pincode,required this.isdefault,required this.addressid});
+}
+
 class FetchLoginEvent extends LoginEvent{}
 
 class LocationPostEvent extends LoginEvent{
@@ -38,4 +52,10 @@ class LoginAddressEvent extends LoginEvent{
 
   LoginAddressEvent({required this.contactnumber,required this.name,required this.address1,required this.city,
   required this.address2,required this.isVisible,required this.pincode,required this.state});
+}
+
+class LoginAddressDeleteEvent extends LoginEvent{
+  final String addressid;
+
+  LoginAddressDeleteEvent({required this.addressid});
 }

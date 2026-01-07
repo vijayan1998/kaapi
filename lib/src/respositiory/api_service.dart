@@ -4,6 +4,7 @@ import 'package:hive/hive.dart' show Hive;
 import 'package:http/http.dart' as http;
 import 'package:kappi/src/bloc/apiurl.dart';
 import 'package:kappi/src/model/cart_model.dart';
+import 'package:kappi/src/model/member_model.dart';
 import 'package:kappi/src/model/menu_model.dart';
 import 'package:kappi/src/model/order_model.dart';
 import 'package:kappi/src/model/store_model.dart';
@@ -141,6 +142,17 @@ class StoreRepository{
       }else{
         throw Exception('Fetch Data Error');
       }
+  }
+
+  Future<List<MemberModel>> memberList() async {
+    final response = await http.get(Uri.parse('${Apiurl.apiurl}/membership/getallmembership'));
+    if(response.statusCode == 200){
+      final decoded = json.decode(response.body);
+      List<dynamic> responseData = decoded['data'];
+      return responseData.map((data) => MemberModel.fromJson(data)).toList();
+    }else {
+      throw Exception('Fetch Data Error');
+    }
   }
 
 }

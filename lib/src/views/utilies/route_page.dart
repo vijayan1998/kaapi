@@ -8,7 +8,6 @@ import 'package:kappi/src/views/screens/navigation/membership/membershipdetail.d
 import 'package:kappi/src/views/screens/navigation/navigationscreen.dart';
 import 'package:kappi/src/views/screens/navigation/order/orderdetails.dart';
 import 'package:kappi/src/views/screens/navigation/profile/deleteaccount.dart';
-import 'package:kappi/src/views/screens/navigation/profile/deliveryadd.dart';
 import 'package:kappi/src/views/screens/navigation/profile/deliveryaddress.dart';
 import 'package:kappi/src/views/screens/navigation/profile/logoutscreen.dart';
 import 'package:kappi/src/views/screens/navigation/profile/myorderscreen.dart';
@@ -129,12 +128,12 @@ class AppRoutes {
       transitionDuration: const Duration(milliseconds: 250),
       transition: Transition.leftToRightWithFade ,
     ),
-     GetPage(
-      name: Appnames.deliveryadd,
-      page: () => DeliveryAddScreen(),
-      transitionDuration: const Duration(milliseconds: 250),
-      transition: Transition.leftToRightWithFade ,
-    ),
+    //  GetPage(
+    //   name: Appnames.deliveryadd,
+    //   page: () => DeliveryEditScreen(),
+    //   transitionDuration: const Duration(milliseconds: 250),
+    //   transition: Transition.leftToRightWithFade ,
+    // ),
      GetPage(
       name: Appnames.delete,
       page: () => DeleteAccountScreen(),

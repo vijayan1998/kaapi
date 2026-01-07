@@ -44,6 +44,7 @@ class LoginModel {
 }
 
 class Address{
+  final String? addressid;
   final String? name;
   final String? contactnumber;
   final String? address1;
@@ -53,10 +54,11 @@ class Address{
   final String? pincode;
   final bool? isVisible;
 
-  Address({ this.name,this.contactnumber,this.address1,this.address2,this.city,this.isVisible,this.pincode,this.state});
+  Address({this.addressid, this.name,this.contactnumber,this.address1,this.address2,this.city,this.isVisible,this.pincode,this.state});
 
   factory Address.fromJson(Map<String,dynamic>json){
     return Address(
+      addressid: json['_id'],
       name: json['location_name'],
       contactnumber: json['contact_number'],
       address1: json['address_line1'],
@@ -69,6 +71,7 @@ class Address{
   }
   Map<String,dynamic>toJson() {
     return {
+      '_id':addressid,
       'location_name':name,
       'contact_number':contactnumber,
       'address_line1':address1,

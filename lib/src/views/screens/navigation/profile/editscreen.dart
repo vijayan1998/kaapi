@@ -10,6 +10,7 @@ import 'package:kappi/src/bloc/login_state.dart';
 import 'package:kappi/src/model/login_model.dart';
 import 'package:kappi/src/respositiory/login_service.dart';
 import 'package:kappi/src/views/screens/navigation/navigationscreen.dart';
+import 'package:kappi/src/views/screens/navigation/profile/addaddress.dart';
 import 'package:kappi/src/views/screens/navigation/profile/editaddress.dart';
 import 'package:kappi/src/views/utilies/colors.dart';
 import 'package:kappi/src/views/utilies/images.dart';
@@ -200,33 +201,39 @@ class _EditScreenState extends State<EditScreen> {
                 color: Appcolors.appColors.shade100,
                 fontWeight: FontWeight.w600,
               ),),
-              ListTile(
+              ListView.builder(
+                shrinkWrap: true,
+                padding: EdgeInsets.all(0),
+                itemCount: widget.address!.length,
+                itemBuilder: (context,index){
+                  final address = widget.address![index];
+                  return ListTile(
                 contentPadding: EdgeInsets.all(0),
                 leading: Image.asset(Appimage.home2),
-                title: Text(widget.address!.isEmpty ? 'Home' :widget.address!.first.name.toString(),style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                title: Text(widget.address!.isEmpty ? 'Home' :address.name.toString(),style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                   color: Appcolors.appColors.shade100,
                 ),),
-                subtitle: Text(widget.address!.isEmpty ? '123 Asssmdg' :widget.address!.first.address1.toString(),style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                subtitle: Text(widget.address!.isEmpty ? '123 Asssmdg' :address.address1.toString(),style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                   color: Appcolors.appColors.shade100,
                 ),),
-                trailing: InkWell(child: Image.asset(Appimage.edit),onTap: (){
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => EditAddressScreens(
-                    // name: widget.address!.first.name.toString(),
-                    // address: widget.address!.first.address.toString(),
-                  )));
-                },),
-              ),
-               ListTile(
-                contentPadding: EdgeInsets.all(0),
-                leading: Image.asset(Appimage.work),
-                title: Text('Work',style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                  color: Appcolors.appColors.shade100,
-                ),),
-                subtitle: Text('456 Oak Ave, Anytown, USA',style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                  color: Appcolors.appColors.shade100,
-                ),),
-                trailing: Image.asset(Appimage.edit),
-              ),
+                trailing: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [ 
+                   widget.address!.isEmpty ? SizedBox() : InkWell(child: Image.asset(Appimage.edit),onTap: (){
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => DeliveryEditScreen(
+                        location: address.name.toString(), isVisible: address.isVisible!, phone: address.contactnumber.toString(), 
+                        address: address.address1.toString(), address2: address.address2.toString(), city: address.city.toString(), 
+                         addressid: address.addressid.toString(),state: address.state.toString(), pincode: address.pincode.toString(),)));
+                    },),
+                    16.hspace,
+                      InkWell(child: Icon(Icons.add,color: Appcolors.appColors.shade100,size: 26,),onTap: (){
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => AddAddressScreens()));
+                    },),
+                  ],
+                ),
+              );
+              }),
               24.vspace,
               BlocProvider(create: (_) => UserDetailsBloc(LoginRepository()),
               child: BlocConsumer<UserDetailsBloc,LoginState>(
@@ -247,7 +254,6 @@ class _EditScreenState extends State<EditScreen> {
                 isLoading: isLoading,
                 textColor: Appcolors.appColors.shade100,
                 onPressed: (){
-                  // final fileName = image != null ? image!.path.split('/').last : "";
                   context.read<UserDetailsBloc>().add(LoginUpdateEvent(email: email.text, 
                   userimg: image, username: name.text));
                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Update Successfully')));

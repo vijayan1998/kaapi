@@ -8,50 +8,64 @@ import 'package:kappi/src/views/utilies/colors.dart';
 import 'package:kappi/src/views/utilies/sizedbox.dart';
 import 'package:kappi/src/views/widget/custom_button.dart';
 
-class EditAddressScreens extends StatefulWidget {
-  final String? name;
-  final String? address;
-  const EditAddressScreens({super.key,this.address,this.name});
+class DeliveryEditScreen extends StatefulWidget {
+  final String location;
+  final String phone;
+  final String address;
+  final String address2;
+  final String city;
+  final String state;
+  final String pincode;
+  final bool isVisible;
+  final String addressid;
+  const DeliveryEditScreen({super.key, required this.location,required this.isVisible,required this.phone, required this.address, required this.address2, required this.city, required this.state, required this.pincode, required this.addressid});
 
   @override
-  State<EditAddressScreens> createState() => _EditAddressScreensState();
+  State<DeliveryEditScreen> createState() => _DeliveryEditScreenState();
 }
 
-class _EditAddressScreensState extends State<EditAddressScreens> {
+class _DeliveryEditScreenState extends State<DeliveryEditScreen> {
   TextEditingController name = TextEditingController();
-  TextEditingController contactnumber = TextEditingController();
+  TextEditingController phone = TextEditingController();
+  TextEditingController address = TextEditingController();
   TextEditingController address1 = TextEditingController();
-  TextEditingController address2 = TextEditingController();
   TextEditingController city = TextEditingController();
   TextEditingController state1 = TextEditingController();
   TextEditingController pincode = TextEditingController();
-  bool isvalue = true;
+
+  late bool isvalue;
   @override
   void initState(){
-    //  name.text = widget.name.toString();
-    //  address.text = widget.address.toString();
     super.initState();
+    name = TextEditingController(text: widget.location);
+    phone = TextEditingController(text: widget.phone);
+    address = TextEditingController(text: widget.address);
+    address1 = TextEditingController(text: widget.address2);
+    city = TextEditingController(text: widget.city);
+    state1 = TextEditingController(text: widget.state);
+    pincode = TextEditingController(text: widget.pincode);
+    isvalue = widget.isVisible;
   }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Appcolors.appColors.shade50,
-       appBar: AppBar(
-        leading: IconButton(onPressed: (){
-          Navigator.pop(context);
-        }, 
-        icon: Icon(Icons.arrow_back,color: Appcolors.appColors.shade100,)),
-        backgroundColor: Appcolors.appColors.shade50,
+      appBar: AppBar(
         centerTitle: true,
-        title: Text('Edit Address',style: Theme.of(context).textTheme.titleLarge!.copyWith(
+        backgroundColor: Appcolors.appColors.shade50,
+         leading: IconButton(onPressed: (){
+          Navigator.pop(context);
+         }, 
+        icon: Icon(Icons.arrow_back,color: Appcolors.appColors.shade100)),
+        title: Text('Edit Addresses',style: Theme.of(context).textTheme.titleLarge!.copyWith(
           color: Appcolors.appColors.shade100,
           fontWeight: FontWeight.w700,
         ),),
       ),
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 24,horizontal:16),
-          child:  Column(
+          padding: const EdgeInsets.symmetric(vertical: 24,horizontal: 16),
+          child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
@@ -79,7 +93,7 @@ class _EditAddressScreensState extends State<EditAddressScreens> {
               ),),
               8.vspace,
               TextFormField(
-                controller: contactnumber,
+                controller: phone,
                 style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                   color: Appcolors.appColors.shade100,
                 ),
@@ -97,7 +111,7 @@ class _EditAddressScreensState extends State<EditAddressScreens> {
               ),),
               8.vspace,
               TextFormField(
-                controller: address1,
+                controller: address,
                 style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                   color: Appcolors.appColors.shade100,
                 ),
@@ -115,7 +129,7 @@ class _EditAddressScreensState extends State<EditAddressScreens> {
               ),),
               8.vspace,
               TextFormField(
-                controller: address2,
+                controller: address1,
                 style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                   color: Appcolors.appColors.shade100,
                 ),
@@ -189,7 +203,7 @@ class _EditAddressScreensState extends State<EditAddressScreens> {
               Switch(
                 inactiveThumbColor: Appcolors.appColors.shade100,
                 inactiveTrackColor: Appcolors.appColors.shade50,
-                value: false, 
+                value: isvalue, 
               onChanged: (value){
                 setState(() {
                   isvalue = value;
@@ -197,36 +211,41 @@ class _EditAddressScreensState extends State<EditAddressScreens> {
               })
                 ],
               ),
+              16.vspace,
+              BlocProvider(create: (_) => UserUpdateAddressBloc(LoginRepository()),
+              child: BlocConsumer<UserUpdateAddressBloc,LoginState>(listener: (context,state){
+                if(state is LoginLodingState){
+                  CircularProgressIndicator();
+                }else if(state is LoginSuccessState){
+                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Address Update Successfully',style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                      color: Appcolors.appColors.shade100,
+                    ),)));
+                } else if(state is LoginErrorState){
+                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.message,style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                      color: Appcolors.appColors.shade100,
+                    ),)));
+                }
+              },
+              builder: (context,state){
+                 bool isLoading = state is LoginLodingState;
+                 return  Custombuttonwidget(text: 'Update Address', 
+          color: Appcolors.appColors.shade600, textColor: Appcolors.appColors.shade100,
+          isLoading: isLoading,
+          onPressed: (){
+            context.read<UserUpdateAddressBloc>().add(LoginUpdateAddressEvent(name: name.text, contactnumber: phone.text, address: address.text, address2: address1.text,city: city.text, state: state1.text, 
+            pincode: pincode.text, isdefault: isvalue, addressid:widget.addressid));
+          },);
+            }, ),),
+         
+          16.vspace,
+          Custombuttonwidget(text: 'Cancel', 
+          color: Color(0xff1F1F1F), textColor: Appcolors.appColors.shade100,
+          onPressed: (){},),
           16.vspace,
             ],
           ),
         ),
       ),
-      bottomNavigationBar:  BlocProvider(create: (_) => UserAddressBloc(LoginRepository()),
-              child: BlocConsumer<UserAddressBloc,LoginState>(
-                listener: (context,state){
-                  if(state is FetchLoginLoading){
-
-                  }
-                  if(state is FetchLoginErrorState){
-                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.message,style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                      color: Appcolors.appColors.shade100,
-                    ),)));
-                  }
-                },
-                builder: (context,state){
-                  bool isLoading = state is LoginLodingState;
-                  return Padding(padding: EdgeInsets.all(16),
-      child: Custombuttonwidget(text: 'Save', isLoading: isLoading,
-      onPressed: (){
-        context.read<UserAddressBloc>().add(LoginAddressEvent(contactnumber: contactnumber.text, name: name.text,
-        address1: address1.text,address2: address2.text,city: city.text,pincode: pincode.text,isVisible: isvalue,state: state1.text));
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Address Successfully')));
-      }, 
-     color: Color(0xff40332B),  
-     textColor: Appcolors.appColors.shade100,),);
-
-              }),),
     );
   }
 }

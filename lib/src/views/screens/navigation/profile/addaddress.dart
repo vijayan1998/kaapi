@@ -1,47 +1,55 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:kappi/src/bloc/login_bloc.dart';
+import 'package:kappi/src/bloc/login_event.dart';
+import 'package:kappi/src/bloc/login_state.dart';
+import 'package:kappi/src/respositiory/login_service.dart';
 import 'package:kappi/src/views/utilies/colors.dart';
-import 'package:kappi/src/views/utilies/route_name.dart';
 import 'package:kappi/src/views/utilies/sizedbox.dart';
 import 'package:kappi/src/views/widget/custom_button.dart';
 
-class DeliveryAddScreen extends StatefulWidget {
-  const DeliveryAddScreen({super.key});
+class AddAddressScreens extends StatefulWidget {
+  final String? name;
+  final String? address;
+  const AddAddressScreens({super.key,this.address,this.name});
 
   @override
-  State<DeliveryAddScreen> createState() => _DeliveryAddScreenState();
+  State<AddAddressScreens> createState() => _AddAddressScreensState();
 }
 
-class _DeliveryAddScreenState extends State<DeliveryAddScreen> {
+class _AddAddressScreensState extends State<AddAddressScreens> {
   TextEditingController name = TextEditingController();
-  TextEditingController phone = TextEditingController();
-  TextEditingController address = TextEditingController();
+  TextEditingController contactnumber = TextEditingController();
   TextEditingController address1 = TextEditingController();
+  TextEditingController address2 = TextEditingController();
   TextEditingController city = TextEditingController();
-  TextEditingController state = TextEditingController();
+  TextEditingController state1 = TextEditingController();
   TextEditingController pincode = TextEditingController();
-
-  bool isvalue = true;
+  bool isvalue = false;
+  @override
+  void initState(){
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Appcolors.appColors.shade50,
-      appBar: AppBar(
-        centerTitle: true,
+       appBar: AppBar(
+        leading: IconButton(onPressed: (){
+          Navigator.pop(context);
+        }, 
+        icon: Icon(Icons.arrow_back,color: Appcolors.appColors.shade100,)),
         backgroundColor: Appcolors.appColors.shade50,
-         leading: IconButton(onPressed: (){
-          Get.toNamed(Appnames.delivery);
-         }, 
-        icon: Icon(Icons.arrow_back,color: Appcolors.appColors.shade100)),
-        title: Text('Delivery Addresses',style: Theme.of(context).textTheme.titleLarge!.copyWith(
+        centerTitle: true,
+        title: Text('Add Address',style: Theme.of(context).textTheme.titleLarge!.copyWith(
           color: Appcolors.appColors.shade100,
           fontWeight: FontWeight.w700,
         ),),
       ),
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 24,horizontal: 16),
-          child: Column(
+          padding: const EdgeInsets.symmetric(vertical: 24,horizontal:16),
+          child:  Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
@@ -69,7 +77,7 @@ class _DeliveryAddScreenState extends State<DeliveryAddScreen> {
               ),),
               8.vspace,
               TextFormField(
-                controller: phone,
+                controller: contactnumber,
                 style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                   color: Appcolors.appColors.shade100,
                 ),
@@ -87,7 +95,7 @@ class _DeliveryAddScreenState extends State<DeliveryAddScreen> {
               ),),
               8.vspace,
               TextFormField(
-                controller: address,
+                controller: address1,
                 style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                   color: Appcolors.appColors.shade100,
                 ),
@@ -105,7 +113,7 @@ class _DeliveryAddScreenState extends State<DeliveryAddScreen> {
               ),),
               8.vspace,
               TextFormField(
-                controller: address1,
+                controller: address2,
                 style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                   color: Appcolors.appColors.shade100,
                 ),
@@ -140,7 +148,7 @@ class _DeliveryAddScreenState extends State<DeliveryAddScreen> {
               ),),
               8.vspace,
               TextFormField(
-                controller: state,
+                controller: state1,
                 style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                   color: Appcolors.appColors.shade100,
                 ),
@@ -179,7 +187,7 @@ class _DeliveryAddScreenState extends State<DeliveryAddScreen> {
               Switch(
                 inactiveThumbColor: Appcolors.appColors.shade100,
                 inactiveTrackColor: Appcolors.appColors.shade50,
-                value: false, 
+                value: isvalue, 
               onChanged: (value){
                 setState(() {
                   isvalue = value;
@@ -187,19 +195,42 @@ class _DeliveryAddScreenState extends State<DeliveryAddScreen> {
               })
                 ],
               ),
-              16.vspace,
-               Custombuttonwidget(text: 'Save Address', 
-          color: Appcolors.appColors.shade600, textColor: Appcolors.appColors.shade100,
-          onPressed: (){},),
-          16.vspace,
-          Custombuttonwidget(text: 'Cancel', 
-          color: Color(0xff1F1F1F), textColor: Appcolors.appColors.shade100,
-          onPressed: (){},),
           16.vspace,
             ],
           ),
         ),
       ),
+      bottomNavigationBar:  BlocProvider(create: (_) => UserAddressBloc(LoginRepository()),
+              child: BlocConsumer<UserAddressBloc,LoginState>(
+                listener: (context,state){
+                  if(state is LoginLodingState){
+                    CircularProgressIndicator();
+                  }
+                   else if(state is LoginSuccessState){
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('User Address uploads Successfully',style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                      color: Appcolors.appColors.shade100,
+                    ),)));
+                  }
+                 else if(state is LoginErrorState){
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.message,style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                      color: Appcolors.appColors.shade100,
+                    ),)));
+                  }
+                
+                },
+                builder: (context,state){
+                  bool isLoading = state is LoginLodingState;
+                  return Padding(padding: EdgeInsets.all(16),
+      child: Custombuttonwidget(text: 'Save', isLoading: isLoading,
+      onPressed: (){
+        context.read<UserAddressBloc>().add(LoginAddressEvent(contactnumber: contactnumber.text, name: name.text,
+        address1: address1.text,address2: address2.text,city: city.text,pincode: pincode.text,isVisible: isvalue,state: state1.text));
+        
+      }, 
+     color: Color(0xff40332B),  
+     textColor: Appcolors.appColors.shade100,),);
+
+              }),),
     );
   }
 }
